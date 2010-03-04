@@ -68,11 +68,11 @@ class Base{objectName}Controller extends MainController
         $this->{objectName}Model->bind($params);
         if ($this->{objectName}Model->delete())
         {
-            $this->redirect('list', null, null, "Item deleted successfully", CoreView::MESSAGE_TYPE_SUCCESS);
+            $this->redirect('list', null,  "Item deleted successfully", CoreView::MESSAGE_TYPE_SUCCESS);
         }
         else
         {
-            $this->redirect('list', null, null, "Item could not be deleted", CoreView::MESSAGE_TYPE_ERROR);
+            $this->redirect('list', null,  "Item could not be deleted", CoreView::MESSAGE_TYPE_ERROR);
         }
         exit();
     }

@@ -1,4 +1,31 @@
 <?php
+/**
+ * Note : Code is released under the GNU LGPL
+ *
+ * Please do not change the header of this file 
+ *
+ * This library is free software; you can redistribute it and/or modify it under the terms of the GNU 
+ * Lesser General Public License as published by the Free Software Foundation; either version 2 of 
+ * the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; 
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. 
+ *
+ * See the GNU Lesser General Public License for more details.
+ */
+
+/**
+ * File:        configuration.php
+ * 
+ * @author      Anis BEREJEB
+ * @version     0.1
+ */
+
+/**
+ * This file contains the configuration options for the generator.
+ * see documentation for more information 
+ */
+
 define('DS', DIRECTORY_SEPARATOR);
 define('MF_ADMIN_FOLDER', dirname(__FILE__) . DS);
 define('BACK_GENERATION_PATH', MF_ADMIN_FOLDER . 'objects');

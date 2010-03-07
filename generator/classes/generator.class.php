@@ -1,19 +1,69 @@
 <?php 
+/**
+ * Note : Code is released under the GNU LGPL
+ *
+ * Please do not change the header of this file 
+ *
+ * This library is free software; you can redistribute it and/or modify it under the terms of the GNU 
+ * Lesser General Public License as published by the Free Software Foundation; either version 2 of 
+ * the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; 
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. 
+ *
+ * See the GNU Lesser General Public License for more details.
+ */
+
+/**
+ * File:        generator.class.php
+ * 
+ * @author      Anis BEREJEB
+ * @version     0.1
+ */
+
+/**
+ * Generator class
+ * 
+ */
 class Generator
 {
+	/**
+	 * Database connection
+	 * 
+	 * @var Database  Defaults to null. 
+	 */
 	private $_connection = null;
+	/**
+	 * Module name
+	 * 
+	 * @var string  Defaults to null. 
+	 */
 	private $_module = null;
+
+	/**
+	 * Module path
+	 * 
+	 * @var string  Defaults to null. 
+	 */
 	private $_modulePath = null;
-	private $menusNodes = array();
+
+	/**
+	 * default generation actions
+	 * 
+	 * @var array  Defaults to array('list', 'edit', 'detail'). 
+	 */
 	private $_actions = array('list', 'edit', 'detail');
 
 
+	/**
+	 * Constructor
+	 * 
+	 */
 	public function __construct($module)
 	{
 
 		$this->setModule($module);
 		$this->setModulePath($module);
-
 		$this->_connection = new PDODatabase(BACK_DB_HOST, BACK_DB_DATABASE, BACK_DB_USER, BACK_DB_PASSWORD);
 		$this->generateMainController();
 		$this->generateMainView();
@@ -31,32 +81,46 @@ class Generator
 	 */
 	public function setModulePath($module)
 	{
-	(!Toolbox::isAbsolutePath($module)) ? $this->_modulePath = MF_DEFAULT_FOLDER . rtrim($module, DS) . DS : $this->_modulePath = rtrim($module, DS) . DS;
+	    (!Toolbox::checkAbsolutePath($module)) ? $this->_modulePath = MF_DEFAULT_FOLDER . rtrim($module, DS) . DS : $this->_modulePath = rtrim($module, DS) . DS;
 	}
 
+	/**
+	 * Module path Getter
+	 * 
+	 * @return string The module path
+	 */
 	public function getModulePath()
 	{
 		return $this->_modulePath;
 	}
 
+	/**
+	 * Module setter 
+	 * 
+	 * @param  string  $module The module
+	 */
 	public function setModule($module)
 	{
 		$this->_module = $module;
 	}
+
+	/**
+	 * Module Getter
+	 * 
+	 * @return string the module
+	 */
 	public function getModule()
 	{
 		return $this->_module;
 	}
 
-
 	/**
 	 * generate an object
 	 *
-	 * @param unknown_type $tableName
+	 * @param string $tableName The associated table name
 	 */
 	public function generate($table)
 	{
-		// Requête "Select" retourne un jeu de résultats
 		$query = $this->_connection->prepare("SHOW COLUMNS FROM $table->name");
         $query->execute();
         $fields = $query->fetchAll(PDO::FETCH_OBJ);
@@ -87,6 +151,12 @@ class Generator
 	}
 
 
+	/**
+	 * Returns an MVC Template
+	 * 
+	 * @param  string  $type The template type
+	 * @return string The content of the template
+	 */
 	private function getMVCTemplate($type)
 	{
 		if (file_exists(MF_TEMPLATES_FOLDER . $this->_module . DS . $type . '.tpl'))
@@ -100,11 +170,10 @@ class Generator
 	}
 
     /**
-     * TODO: short description.
+     * Generates the Base Model
      * 
-     * @param  mixed  $fields    
-     * @param  mixed  $tableName 
-     * @return TODO
+     * @param  array    $fields     The properties of the model  
+     * @param  string   $tableName  The table name
      */
     private function generateBaseModel($fields, $tableName)
     {
@@ -113,14 +182,13 @@ class Generator
         $modelTemplate = str_replace('{objectName}', ucfirst($tableName), $modelTemplate);
         $modelTemplate = str_replace('{properties}', $this->_renderModelProperties($fields, $tableName), $modelTemplate);
         $modelTemplate = str_replace('{methods}', $this->_renderModelMethods($fields), $modelTemplate);
-        Toolbox::saveToFile($baseFileName, $modelTemplate);
+        Toolbox::saveFileWithContent($baseFileName, $modelTemplate);
     }
 	/**
-	 * TODO: short description.
+	 * Generates the model
 	 * 
-	 * @param  mixed  $fields    
-	 * @param  mixed  $tableName 
-	 * @return TODO
+     * @param  array    $fields     The properties of the model  
+     * @param  string   $tableName  The table name
 	 */
 	private function generateModel($fields, $tableName)
 	{
@@ -130,31 +198,27 @@ class Generator
         {    
            $modelTemplate = $this->getMVCTemplate('Model');
            $modelTemplate = str_replace('{objectName}', ucfirst($tableName), $modelTemplate);
-           Toolbox::saveToFile($fileName, $modelTemplate);
+           Toolbox::saveFileWithContent($fileName, $modelTemplate);
         }
 
 	}
 
     /**
-     * TODO: short description.
+     * Generates the Base Form
      * 
-     * @param  mixed  $fields    
-     * @param  mixed  $tableName 
-     * @return TODO
+     * @param  string   $tableName  The table name
      */
     private function generateBaseForm($tableName)
     {
         $baseFileName = $this->_modulePath . MF_FORMS_FOLDER . "Base/Base" . ucfirst($tableName) . "Form.php";
         $formTemplate = $this->getMVCTemplate('BaseForm');
         $formTemplate = str_replace('{objectName}', ucfirst($tableName), $formTemplate);
-        Toolbox::saveToFile($baseFileName, $formTemplate);
+        Toolbox::saveFileWithContent($baseFileName, $formTemplate);
     }
 	/**
-	 * TODO: short description.
+	 * Generates the Form
 	 * 
-	 * @param  mixed  $fields    
-	 * @param  mixed  $tableName 
-	 * @return TODO
+     * @param  string   $tableName  The table name
 	 */
 	private function generateForm($tableName)
 	{
@@ -164,30 +228,28 @@ class Generator
         {    
            $formTemplate = $this->getMVCTemplate('Form');
            $formTemplate = str_replace('{objectName}', ucfirst($tableName), $formTemplate);
-           Toolbox::saveToFile($fileName, $formTemplate);
+           Toolbox::saveFileWithContent($fileName, $formTemplate);
         }
 
 	}
 
 
     /**
-     * TODO: short description.
+     * Generates the Base Controller
      * 
-     * @param  mixed  $tableName 
-     * @return TODO
+     * @param  string   $tableName  The table name
      */
     private function generateBaseController($tableName)
     {
         $baseFileName = $this->_modulePath . MF_CONTROLLERS_FOLDER . "Base/Base" . ucfirst($tableName) . "Controller.php";
 		$controllerTemplate = $this->getMVCTemplate('BaseController');
 		$controllerTemplate = str_replace('{objectName}', ucfirst($tableName), $controllerTemplate);
-		Toolbox::saveToFile($baseFileName, $controllerTemplate);
+		Toolbox::saveFileWithContent($baseFileName, $controllerTemplate);
     }
 	/**
-	 * TODO: short description.
+	 * Generates the Controller
 	 * 
-	 * @param  mixed  $tableName 
-	 * @return TODO
+     * @param  string   $tableName  The table name
 	 */
 	private function generateController($tableName)
 	{
@@ -196,11 +258,14 @@ class Generator
         {    
             $controllerTemplate = $this->getMVCTemplate('Controller');
             $controllerTemplate = str_replace('{objectName}', ucfirst($tableName), $controllerTemplate);
-            Toolbox::saveToFile($fileName, $controllerTemplate);
+            Toolbox::saveFileWithContent($fileName, $controllerTemplate);
         }
 
     }
 
+    /**
+     * Generates the main controller
+     */
     private function generateMainController()
     {
         
@@ -208,42 +273,42 @@ class Generator
         if (!file_exists($fileName))
         {    
             $controllerTemplate = $this->getMVCTemplate('MainController');
-            Toolbox::saveToFile($fileName, $controllerTemplate);
+            Toolbox::saveFileWithContent($fileName, $controllerTemplate);
         }
 
 
     }
     /**
-     * TODO: short description.
+     * Generates the Base view
      * 
-     * @param  mixed  $tableName 
-     * @return TODO
+     * @param  string   $tableName  The table name
      */
     private function generateBaseView($tableName)
     {
         $baseFileName = $this->_modulePath . MF_VIEWS_FOLDER . "Base/Base" . ucfirst($tableName) . "View.php";
 		$controllerTemplate = $this->getMVCTemplate('BaseView');
 		$controllerTemplate = str_replace('{objectName}', ucfirst($tableName), $controllerTemplate);
-		Toolbox::saveToFile($baseFileName, $controllerTemplate);
+		Toolbox::saveFileWithContent($baseFileName, $controllerTemplate);
     }
 
 
+    /**
+     * Generates the Main view
+     */
     private function generateMainView()
     {
        $fileName = $this->_modulePath . MF_VIEWS_FOLDER . "MainView.php";
         if (!file_exists($fileName))
         {    
             $viewTemplate = $this->getMVCTemplate('MainView');
-            Toolbox::saveToFile($fileName, $viewTemplate);
+            Toolbox::saveFileWithContent($fileName, $viewTemplate);
         }
-
     }
 
     /**
-     * TODO: short description.
+     * Generates the Global View
      * 
-     * @param  mixed  $tableName 
-     * @return TODO
+     * @param  string   $tableName  The table name
      */
     private function _generateGlobalView($tableName)
     {
@@ -253,19 +318,29 @@ class Generator
             $viewsTemplate = $this->getMVCTemplate('View');
             // Replace the object name
             $viewsTemplate = str_replace('{objectName}', ucfirst($tableName), $viewsTemplate);
-            Toolbox::saveToFile($fileName, $viewsTemplate);
+            Toolbox::saveFileWithContent($fileName, $viewsTemplate);
         }    
     }
 
+    /**
+     * Generated the Main template
+     */
     private function generateMainTemplate()
     {
         if (!file_exists($this->_modulePath . MF_MVC_TPL_FOLDER . "default.php"))
         {
-            Toolbox::saveToFile($this->_modulePath . MF_MVC_TPL_FOLDER . "default.php", $this->getMVCTemplate('Template'));
+            Toolbox::saveFileWithContent($this->_modulePath . MF_MVC_TPL_FOLDER . "default.php", $this->getMVCTemplate('Template'));
         }
     }
 
 
+    /**
+     * Generates the view
+     * 
+     * @param  string  $viewName    The view name 
+     * @param  array  $fields       The properties of the model
+     * @param  string  $tableName   The table name
+     */
     private function _generateView($viewName, $fields, $tableName)
     {
         $fileName = $this->_modulePath . MF_VIEWS_FOLDER . ucfirst($tableName) . DS . $viewName . ".php";
@@ -273,11 +348,17 @@ class Generator
         {    
             $viewTemplate = $this->getMVCTemplate('views'. DS . $viewName);
             $viewTemplate = str_replace('{objectName}', $tableName, $viewTemplate);
-            Toolbox::saveToFile($fileName, $viewTemplate);
+            Toolbox::saveFileWithContent($fileName, $viewTemplate);
         }    
     }
 
 
+    /**
+     * Renders the model properties
+     * 
+     * @param  array  $fields       The properties of the model
+     * @param  string  $tableName   The table name
+     */
     private function _renderModelProperties($fields, $tableName)
     {
         $keys = $this->_renderObjectKeys($fields);
@@ -286,24 +367,28 @@ class Generator
             "
             // Protected - contains the table name - Mandatory or will throw an exception
             protected \$_tableName =  '$tableName' ;
-        protected \$_tableKeys = array($keys);
+            protected \$_tableKeys = array($keys);
 
-        // list of rendered fields
-        $fields
-
+            // Properties
+            $fields
             ";
     }
 
     /**
-     * TODO : implement
+     * Renders the Model Methods
      *
-     * @return unknown
+     * @return string empty string for the moment
      */
     private function _renderModelMethods()
     {
         return '';
     }
 
+    /**
+     * Renders the model keys
+     * 
+     * @param  array  $fields The properties of the model
+     */
     private function _renderObjectKeys($fields)
     {
         $keys = array();
@@ -325,9 +410,14 @@ class Generator
 
     }
 
+    /**
+     * Renders the fields of the model
+     * 
+     * @param  array $fields The properties of the model
+     */
     private function _renderObjectFields($fields)
     {
-        $output = "// Public properties - Mapped to the table fields \n";
+        $output = "\t// Public properties - Mapped to the table fields \n";
         foreach ($fields as $obj)
         {
             $output.= "\tpublic \$" . $obj->Field . " = null;\n";
@@ -337,9 +427,9 @@ class Generator
 
 
     /**
-     * TODO: short description.
+     * Generates the webroot folder
      * 
-     * @return TODO
+     * @param  string  $moduleName  The module name
      */
     private function generateWebRoot($moduleName)
     {
@@ -353,14 +443,14 @@ class Generator
             mkdir($baseFolder . 'scripts' . DS, 0777);
             mkdir($baseFolder . 'styles' . DS, 0777);
             $indexTemplate = str_replace('{moduleName}', $moduleName, $indexTemplate);
-            Toolbox::saveToFile($fileName, $indexTemplate);
+            Toolbox::saveFileWithContent($fileName, $indexTemplate);
         }    
     }    
 
     /**
-     * TODO: short description.
+     * Generates the configuration file
      * 
-     * @return TODO
+     * @param  string  $moduleName  The module name
      */
     private function generateConfigurationFile($moduleName)
     {
@@ -374,8 +464,7 @@ class Generator
             $confTemplate = str_replace('{mysqlUser}', BACK_DB_USER, $confTemplate);
             $confTemplate = str_replace('{mysqlPassword}', BACK_DB_PASSWORD, $confTemplate);
             $confTemplate = str_replace('{mysqlDatabase}', BACK_DB_DATABASE, $confTemplate);
-            Toolbox::saveToFile($fileName, $confTemplate);
+            Toolbox::saveFileWithContent($fileName, $confTemplate);
         }    
     }    
-
 }

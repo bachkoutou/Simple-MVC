@@ -1,60 +1,85 @@
 <?php
 /**
- * TODO: short description.
+ * Note : Code is released under the GNU LGPL
+ *
+ * Please do not change the header of this file 
+ *
+ * This library is free software; you can redistribute it and/or modify it under the terms of the GNU 
+ * Lesser General Public License as published by the Free Software Foundation; either version 2 of 
+ * the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; 
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. 
+ *
+ * See the GNU Lesser General Public License for more details.
+ */
+
+/**
+ * File:        FormElement.php
  * 
- * TODO: long description.
+ * @author      Anis BEREJEB
+ * @version     0.1
+ */
+
+/**
+ * Abstract class representing a form element
  * 
  */
 abstract class FormElement
 {
     /**
-     * TODO: description.
+     * Name of the element
      * 
-     * @var mixed
+     * @var string
      */
     private $name;
 
     /**
-     * TODO: description.
+     * Value of the element
      * 
-     * @var mixed
+     * @var string
      */
     private $value;
 
     /**
-     * TODO: description.
+     * Attributes of the element
      * 
      * @var array
      */
     private $attributes;
 
     /**
-     * TODO: description.
+     * type of the element
      * 
-     * @var mixed
+     * @var string
      */
     private $type;
     
     /**
-     * TODO: description.
+     * array of validators applied
      * 
-     * @var mixed
+     * @var array
      */
     private $validators;
 
     /**
-     * TODO: description.
+     * array of errors
      * 
-     * @var mixed
+     * @var array
      */
     private $errors;
     
-    public static $allowedInputTypes = array('text', 'textarea', 'checkbox', 'radio', 'file');
     /**
-     * TODO: short description.
+     * static input types allowed
+     * 
+     * @var array  Defaults to array('text', 'textarea', 'checkbox', 'radio', 'file'). 
+     */
+    public static $allowedInputTypes = array('text', 'textarea', 'checkbox', 'radio', 'file');
+    
+    /**
+     * Attributes Setter
      * 
      * @param  array  $attributes 
-     * @return TODO
      */
     public function setAttributes($attributes)
     {
@@ -62,9 +87,9 @@ abstract class FormElement
     }    
     
     /**
-     * TODO: short description.
+     * Attributes getter
      * 
-     * @return TODO
+     * @return array the attributes array
      */
     public function getAttributes()
     {
@@ -72,9 +97,9 @@ abstract class FormElement
     } 
     
     /**
-     * TODO: short description.
+     * Returns a string representation of the attributes
      * 
-     * @return TODO
+     * @return string 
      */
     public function getAttributesString()
     {
@@ -89,9 +114,9 @@ abstract class FormElement
         return $string;
     }
     /**
-     * TODO: short description.
+     * Name Getter
      * 
-     * @return TODO
+     * @return string The name of the element
      */
     public function getName()
     {
@@ -99,10 +124,9 @@ abstract class FormElement
     }
 
     /**
-     * TODO: short description.
+     * Name Setter
      * 
-     * @param  mixed  $name 
-     * @return TODO
+     * @param  string  $name 
      */
     public function setName($name)
     {
@@ -110,10 +134,9 @@ abstract class FormElement
     }    
     
     /**
-     * TODO: short description.
+     * Value Setter
      * 
-     * @param  mixed  $value 
-     * @return TODO
+     * @param  string  $value 
      */
     public function setValue($value)
     {
@@ -121,9 +144,9 @@ abstract class FormElement
     }
     
     /**
-     * TODO: short description.
+     * Value Getter
      * 
-     * @return TODO
+     * @return string The value
      */
     public function getValue()
     {
@@ -131,9 +154,9 @@ abstract class FormElement
     }    
     
     /**
-     * TODO: short description.
+     * Type Getter
      * 
-     * @return TODO
+     * @return string The type
      */
     public function getType()
     {
@@ -141,10 +164,9 @@ abstract class FormElement
     }
 
     /**
-     * TODO: short description.
+     * Type Setter.
      * 
-     * @param  mixed  $type 
-     * @return TODO
+     * @param  string  $type 
      */
     public function setType($type)
     {
@@ -152,10 +174,9 @@ abstract class FormElement
     }    
     
     /**
-     * TODO: short description.
+     * Adds a validator to the element
      * 
-     * @param  FormValidator  $validator 
-     * @return TODO
+     * @param  FormValidator  $validator the validator to be added  
      */
     public function addValidator(FormElementValidator $validator)
     {
@@ -163,9 +184,9 @@ abstract class FormElement
     }    
 
     /**
-     * TODO: short description.
+     * Returns the list of validators
      * 
-     * @return TODO
+     * @return array The validators
      */
     public function getValidators()
     {
@@ -173,9 +194,10 @@ abstract class FormElement
     }    
     
     /**
-     * TODO: short description.
+     * Validate a form element with all the validators associated
+     * Sets in FormElement::errors the errors if found
      * 
-     * @return TODO
+     * @return boolean true if no error found, false otherwise.
      */
     public function validate()
     {
@@ -186,13 +208,13 @@ abstract class FormElement
                 $this->errors[] =  $validator->getError();
             }    
         }    
-        return (count($this->errors)) ? true : false;
+        return (!count($this->errors)) ? true : false;
     }
     
     /**
-     * TODO: short description.
+     * Errors Getter
      * 
-     * @return TODO
+     * @return array The errors
      */
     public function getErrors()
     {
@@ -201,7 +223,7 @@ abstract class FormElement
     /**
      * Renders a text Help with the validations.
      * 
-     * @return TODO
+     * @return string the Help text
      */
     public function renderValidatorsHint()
     {
@@ -217,6 +239,9 @@ abstract class FormElement
         }
     }    
 
-    abstract public function render();
-
+    /**
+     * Abstract function 
+     * Must be implemented on children to specify how to render the element.
+     */
+    abstract public function render()
 }    

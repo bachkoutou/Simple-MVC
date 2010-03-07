@@ -1,59 +1,82 @@
 <?php
 /**
- * TODO: short description.
+ * Note : Code is released under the GNU LGPL
+ *
+ * Please do not change the header of this file 
+ *
+ * This library is free software; you can redistribute it and/or modify it under the terms of the GNU 
+ * Lesser General Public License as published by the Free Software Foundation; either version 2 of 
+ * the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; 
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. 
+ *
+ * See the GNU Lesser General Public License for more details.
+ */
+
+/**
+ * File:        relationModel.php
  * 
- * TODO: long description.
+ * @author      Anis BEREJEB
+ * @version     0.1
+ */
+
+/**
+ * A Generic relation model
  * 
  */
 class RelationModel extends CoreModel
 {
     /**
-     * TODO: description.
+     * The table name
      * 
-     * @var mixed  Defaults to 'relation'. 
+     * @var string  Defaults to 'relation'. 
      */
     protected $_tableName = 'relation';
     /**
-     * TODO: description.
+     * The table keys
      * 
-     * @var mixed  Defaults to array('id'). 
+     * @var array  Defaults to array('id'). 
      */
     protected $_tableKeys = array('id');
 
     /**
-     * TODO: description.
+     * the source object Id
      * 
-     * @var string  Defaults to null. 
+     * @var int  Defaults to null. 
      */
     public $sourceId = null;
 
 
     /**
-     * TODO: description.
+     * The source class
      * 
      * @var string  Defaults to null. 
      */
     public $sourceClass= null;
 
     /**
-     * TODO: description.
+     * The destination object id
      * 
-     * @var double  Defaults to null. 
+     * @var int  Defaults to null. 
      */
     public $destinationId = null;
 
     /**
-     * TODO: description.
+     * The destination object class
      * 
-     * @var double  Defaults to null. 
+     * @var string  Defaults to null. 
      */
     public $destinationClass = null;
 
     /**
-     * Returns the Related objects 
+     * Returns the Related objects  (Destinations)
      *  
-     * @param  int  $id 
-     * @return TODO
+     * 
+     * @param  string  $sourceClass      The source Class
+     * @param  int     $sourceId         The source Id
+     * @param  string  $destinationClass The Destination Class
+     * @return array the result rows
      */
     public function getDestinations($sourceClass, $sourceId, $destinationClass)
     {
@@ -64,12 +87,13 @@ class RelationModel extends CoreModel
     }
 
     /**
-     * TODO: short description.
+     * Returns the destinations objects for a given relation row
      * 
-     * @param  double  $destinationClass 
-     * @param  double  $destinationId    
-     * @param  string  $sourceClass      
-     * @return TODO
+     * @param  string  $destinationClass The destination Class
+     * @param  int     $destinationId    The destination Id
+     * @param  string  $sourceClass      The source class
+     * @param  int     $sourceClass      The source Id
+     * @return array The result rows
      */
     public function getExactSources($destinationClass, $destinationId, $sourceClass, $sourceId)
     {
@@ -81,12 +105,12 @@ class RelationModel extends CoreModel
 
 
     /**
-     * TODO: short description.
+     * Returns the sources for a destination object
      * 
-     * @param  double  $destinationClass 
-     * @param  double  $destinationId    
-     * @param  string  $sourceClass      
-     * @return TODO
+     * @param  string   $destinationClass The destination Class
+     * @param  int      $destinationId    The destination Id
+     * @param  string   $sourceClass      The source Class
+     * @return array the result rows
      */
     public function getSources($destinationClass, $destinationId, $sourceClass)
     {
@@ -96,12 +120,12 @@ class RelationModel extends CoreModel
     }
 
     /**
-     * TODO: short description.
+     * Returns all the related objects to a class name
      * 
-     * @param  double  $destinationClass 
-     * @param  double  $destinationId    
-     * @param  string  $sourceClass      
-     * @return TODO
+     * @param  string  $sourceClass      The source class
+     * @param  int     $sourceId         The source Id
+     * @param  string  $destinationClass The destination Class
+     * @return array the result rows
      */
     public function getRelated($sourceClass, $sourceId, $destinationClass)
     {
@@ -112,19 +136,17 @@ class RelationModel extends CoreModel
     }
 
     /**
-     * TODO: short description.
+     * Deletes all related objects for a given class name
      * 
-     * @param  string  $sourceClass      
-     * @param  string  $sourceId         
-     * @param  double  $destinationClass 
-     * @return TODO
+     * @param  string  $sourceClass      The source class
+     * @param  int     $sourceId         The source Id
+     * @param  string  $destinationClass The destination class
+     * @return array the result rows
      */
     public function deleteAll($sourceClass, $sourceId, $destinationClass)
     {
         $query = "DELETE FROM {$this->getTableName()} WHERE sourceClass='{$sourceClass}' AND destinationClass='{$destinationClass}' AND sourceId={$sourceId}";
         return $this->database->query($query);
     }    
-
-
 }
 

@@ -1,49 +1,155 @@
 <?php
+/**
+ * Note : Code is released under the GNU LGPL
+ *
+ * Please do not change the header of this file 
+ *
+ * This library is free software; you can redistribute it and/or modify it under the terms of the GNU 
+ * Lesser General Public License as published by the Free Software Foundation; either version 2 of 
+ * the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; 
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. 
+ *
+ * See the GNU Lesser General Public License for more details.
+ */
+
+/**
+ * File:        CoreView.php
+ * 
+ * @author      Anis BEREJEB
+ * @version     0.1
+ */
+
+/**
+ * The Core View
+ * 
+ */
 class CoreView extends ArrayObject
 {
+
+    /**
+     * Message Type Success Constant
+     *
+     * @var string Defaults to 'success'
+     */
 	const MESSAGE_TYPE_SUCCESS = 'success';
+    
+    /**
+     * Message Type Error Constant
+     *
+     * @var string Defaults to 'error'
+     */
 	const MESSAGE_TYPE_ERROR = 'error';
+    
+    /**
+     * Message Type Warning Constant
+     *
+     * @var string Defaults to 'warning'
+     */
 	const MESSAGE_TYPE_WARNING = 'warning';
+
+    /**
+     * Message Type Info Constant
+     *
+     * @var string Defaults to 'error'
+     */
 	const MESSAGE_TYPE_INFO = 'info';
-	/**
+	
+    /**
      * default extenstion of views
      *
-     * @var unknown_type
+     * @var string
      */
 	private $_extension = null;
+
+	/**
+	 * The action name
+	 * 
+	 * @var string  Defaults to null. 
+	 */
 	private $_action = null;
+
+	/**
+	 * The controller name
+	 * 
+	 * @var string  Defaults to null. 
+	 */
 	private $_controller = null;
+
+	/**
+	 * The view name
+	 * 
+	 * @var string  Defaults to null. 
+	 */
 	private $_viewName = null;
+
+	/**
+	 * an array of The css files included
+	 * 
+	 * @var array  Defaults to array(). 
+	 */
 	protected $css = array();
+
+	/**
+	 * an array of The js files includes
+	 * 
+	 * @var array  Defaults to array(). 
+	 */
 	protected $js = array();
+    
+	/**
+	 * an array of javascript scripts used
+	 * 
+	 * @var array  Defaults to array(). 
+	 */
 	protected $scripts = array();
+
+	/**
+	 * message
+	 * 
+	 * @var string  Defaults to ''. 
+	 */
 	protected $message = '';
 	
+	/**
+	 * Indicates if The view should auto render The templates or not
+     * Uses The AUTO_RENDER_TEMPLATE constant as defaut.
+	 * 
+	 * @var boolean  Defaults to AUTO_RENDER_TEMPLATE. 
+	 */
 	public  $renderTemplate = AUTO_RENDER_TEMPLATE;
 
 
 	/**
 	 * default template
 	 *
-	 * @var unknown_type
+	 * @var string 
 	 */
 	private $_tplFile = null;
 
+	/**
+	 * Constructor
+	 * 
+	 * @param  string $controller The controller name
+	 * @param  string $action     The action name, Optional, defaults to 'list'. 
+	 * @param  string  $extension The default views extension,  Optional, defaults to '.php'. 
+	 */
 	public function __construct($controller, $action = 'list', $extension = '.php')
 	{
 		parent::__construct(array(), ArrayObject::ARRAY_AS_PROPS);
-
 		$this->setController($controller);
 		$this->setAction($action);
-
 		$this->setExtension($extension);
-
 		// Check if there is a css file or a js file to include, if yes, include it
-
 		$this->autoIncludeJs();
 		$this->autoIncludeCss();
 	}
 
+	/**
+	 * Renders The Template
+	 * 
+	 */
 	public function renderTemplate()
 	{
 		if (file_exists(BUSINESS. DS . TEMPLATES_PATH  . $this->getTemplate()))
@@ -52,8 +158,9 @@ class CoreView extends ArrayObject
         }    
 	}
 
-
-
+	/**
+	 * echoes The main block in a view
+	 */
 	public function main()
 	{
 		$viewName  = ($this->getViewName()) ? $this->getViewName() : $this->getAction();
@@ -61,6 +168,12 @@ class CoreView extends ArrayObject
 		echo $this->load($file);
 	}
 
+	/**
+	 * echoes The view of a given action 
+	 * 
+	 * @param  string  $action     The action, Optional, defaults to The current action. 
+	 * @param  string  $controller The controller, Optional, defaults to The current controller. 
+	 */
 	public function render($action = null, $controller = null)
 	{
 		(!$controller) ? $controller = $this->getController() : 'main';
@@ -69,12 +182,25 @@ class CoreView extends ArrayObject
 		echo $this->load($file);
 	}
 
+	/**
+	 * Loads a business block
+     * Block should be located in BUSINESS_DIR/VIEWS_DIR/CONTROLLER_DIR/
+	 * 
+	 * @param  string  $file The file to include
+	 */
 	public function loadBlock($file)
 	{
 		$file = BUSINESS . DS .  VIEWS_PATH . $this->getController() . DS . $file;
 		echo $this->load($file);
 	}
 	
+	/**
+	 * Loads a file. (executes an include on it) 
+     * returns The results as a string (could be tested before echo)
+	 * 
+	 * @param  string $file  The file to be echoed
+	 * @return string The contents of The file
+	 */
 	public function load($file)
 	{
 		if (file_exists($file))
@@ -84,73 +210,144 @@ class CoreView extends ArrayObject
 			return ob_get_clean();
 		}
 	}
+    
+	/**
+	 * Extension Setter 
+	 * 
+	 * @param  string  $extension The extension to be used
+	 */
 	public function setExtension($extension)
 	{
 		$this->_extension = $extension;
 	}
 
+	/**
+	 * Extension Getter
+	 * 
+	 * @return string The extension
+	 */
 	public function getExtension()
 	{
 		return $this->_extension;
 	}
 
+	/**
+	 * Template Setter
+	 * 
+	 * @param  string  $tpl The template file to be used
+	 */
 	public function setTemplate($tpl)
 	{
 		$this->_tplFile = $tpl;
 	}
 
+	/**
+	 * Template Getter
+	 * 
+	 * @return string The template file used
+	 */
 	public function getTemplate()
 	{
 		return $this->_tplFile;
 	}
 
+	/**
+	 * Controller Name Setter 
+	 * 
+	 * @param  string  $controller The controller Name including The "Controller" Suffix
+	 */
 	public function setController($controller)
 	{
-		// remove 'Controller' from the name
 		$parts = explode('Controller', $controller);
 		$this->_controller = $parts[0];
 	}
 
+	/**
+	 * Controller Name Getter
+	 * 
+	 * @return string The controller name
+	 */
 	public function getController()
 	{
 		return $this->_controller;
 	}
 
+	/**
+	 * Action name Setter
+	 * 
+	 * @param  string  $action The Action name 
+	 */
 	public function setAction($action)
 	{
 		$this->_action = $action;
 	}
 
+	/**
+	 * Action name Getter
+	 * 
+	 * @return string The action name
+	 */
 	public function getAction()
 	{
 		return $this->_action;
 	}
 	
+	/**
+	 * View name Setter
+	 * 
+	 * @param  string $viewName The view name
+	 */
 	public function setViewName($viewName)
 	{
 		$this->_viewName = $viewName;
 	}
 
+	/**
+	 * View name Getter
+	 * 
+	 * @return string The view name
+	 */
 	public function getViewName()
 	{
 		return $this->_viewName;
 	}	
 
+	/**
+	 * Name Getter
+	 * 
+	 * @return string The name
+	 */
 	public function getName()
 	{
 		return $this->getController();
 	}
 
+	/**
+	 * Context link Getter
+	 * 
+	 * @return string The Context link, including The controller
+	 */
 	public function getContextLink()
 	{
 		return "/?controller=" . $this->getController();
 	}
 
+	/**
+	 * Message Getter
+	 * 
+	 * @return string The message
+	 */
 	public function getMessage()
 	{
 		return $this->message;
 	}
 
+	/**
+	 * Message Setter
+	 * 
+	 * @param  string  $message The message 
+	 * @param  string  $type    The message Type
+	 */
 	public function setMessage($message,$type)
 	{
 		$this->message = new stdClass();
@@ -159,8 +356,10 @@ class CoreView extends ArrayObject
 	}
 
 	/**
-     * Css Manipulation
-     */
+     * Adds a CSS file, if the same file exists, it will NOT be added
+	 * 
+	 * @param  string $file The CSS File to be added
+	 */
 	public function addCss($file)
 	{
 		if (!in_array($file, $this->css))
@@ -169,6 +368,11 @@ class CoreView extends ArrayObject
 		}
 	}
 
+	/**
+	 * Removes a CSS File
+	 * 
+	 * @param  string $file The CSS File to be removed
+	 */
 	public function removeCss($file)
 	{
 		if (isset($this->css[$file]))
@@ -177,9 +381,13 @@ class CoreView extends ArrayObject
 		}
 	}
 
+	/**
+	 * Renders the CSS links
+     * Will render the Predefined CSS Files (see renderPredefinedCss)
+     * and all those that are in the CoreView::css
+	 */
 	public function renderCss()
 	{
-		// Render predefined JS
 		$this->renderPredefinedCss();
 
 		$output = '';
@@ -196,8 +404,11 @@ class CoreView extends ArrayObject
 
 
 	/**
-     * JS Manipulation
-     */
+	 * Adds a JavaScript file to the js Files 
+	 * If the file exists already in the list, it will NOT be added
+     *
+	 * @param  string  $file The JavaScript file to be added
+	 */
 	public function addJs($file)
 	{
 		if (!in_array($file, $this->js))
@@ -206,6 +417,11 @@ class CoreView extends ArrayObject
 		}
 	}
 
+	/**
+	 * Removes a JavaScript file from the list
+	 * 
+	 * @param  string $file The file to be removed
+	 */
 	public function removeJs($file)
 	{
 		if (isset($this->js[$file]))
@@ -214,6 +430,12 @@ class CoreView extends ArrayObject
 		}
 	}
 
+	/**
+	 * Adds a Javascript Script
+	 * 
+	 * @param  string  $script The script to be added, 
+     *                         should not include the script tag
+	 */
 	public function addScript($script)
 	{
 		$this->scripts[] =  "<script type=\"text/javascript\">
@@ -222,6 +444,10 @@ class CoreView extends ArrayObject
 				";
 	}
 
+	/**
+	 * Echoes the links to the JavaScript Files.
+     * Will also includes the Predefined Javascript files (see renderPredefinedJs)
+	 */
 	public function renderJs()
 	{
 		// Render predefined JS
@@ -241,6 +467,10 @@ class CoreView extends ArrayObject
 		$this->renderScripts();
 	}
 
+	/**
+	 * Echoes the JavaScript scripts
+	 * 
+	 */
 	public function renderScripts()
 	{
 		if (is_array($this->scripts) && (0 < count($this->scripts)))
@@ -252,30 +482,27 @@ class CoreView extends ArrayObject
 		}
 	}
 
-
-
-
 	/**
      * checks if there is a js file under scripts, if yes include it
      *
      */
 	public function autoIncludeJs()
 	{
-		// include files in the styles/{module} file
+		// include files in The styles/{module} file
 		$file = 'scripts/' . $this->getModule() . '.js';
 		if (file_exists(WEB . $file))
 		{
 			$this->addCss('/' . $file);
 		}
 
-		// include file in the styles/{modules}/{controller}.css file
+		// include file in The styles/{modules}/{controller}.css file
 		$file = 'scripts/' . $this->getModule() . '/' . $this->getController() . '.js';
 		if (file_exists(WEB . $file))
 		{
 			$this->addJs('/' . $file);
 		}
 
-		// include files in the styles/{module}/{controller}/{action} file
+		// include files in The styles/{module}/{controller}/{action} file
 		$file = 'scripts/' . $this->getModule() . '/' . $this->getController() . '/' . $this->getAction() . '.js';
 		if (file_exists(WEB . $file))
 		{
@@ -289,21 +516,21 @@ class CoreView extends ArrayObject
 	 */
 	public function autoIncludeCss()
 	{
-		// include files in the styles/{module} file
+		// include files in The styles/{module} file
 		$file = 'styles/' . $this->getModule() . '.css';
 		if (file_exists(WEB . $file))
 		{
 			$this->addCss('/' . $file);
 		}
 
-		// include file in the styles/{modules}/{controller}.css file
+		// include file in The styles/{modules}/{controller}.css file
 		$file = 'styles/' . $this->getModule() . '/' . $this->getController() . '.css';
 		if (file_exists(WEB . $file))
 		{
 			$this->addCss('/' . $file);
 		}
 
-		// include files in the styles/{module}/{controller}/{action} file
+		// include files in The styles/{module}/{controller}/{action} file
 		$file = 'styles/' . $this->getModule() . '/' . $this->getController() . '/' . $this->getAction() . '.css';
 		if (file_exists(WEB . $file))
 		{
@@ -311,89 +538,31 @@ class CoreView extends ArrayObject
 		}
 	}
 
-	/**
-     * Form Check validation
-     */
-
-	public function renderFormValidateClass($field)
-	{
-		echo (ENABLE_FORMCHECK) ? $this->renderFormCheckValidation($field) : '';
-	}
 
 	/**
-     * try to hint the appropriate formCheck Validator depending on the type of the field
-     *
-     * @param unknown_type $field
-     */
-	public function renderFormCheckValidation($field)
-	{
-		if ('' != (string)$field->required)
-		{
-			$required = "'required'";
-
-			if ('' != (string) $field->inputTypeConfirm)
-			{
-				$typeConfirm = ",'" . (string) $field->inputTypeConfirm . "'";
-			}
-
-			if ('' != (string) $field->inputTypeTest)
-			{
-				$testConfirm = ",'" . (string) $field->inputTypeTest . "'";
-			}
-			else
-			{
-				// Try to hint the file type
-				//$testConfirm = ",'" . $this->formatType($field->Type) . "'";
-			}
-
-			return "validate[{$required}{$typeConfirm}{$testConfirm}] text-input";
-		}
-		return "";
-	}
-
-
-	/**
-	 * default field type
-	 *
-	 * @return unknown
+	 * Renders a list of predefined JavaScript files
+	 * 
 	 */
-	public function renderFieldType($field)
-	{
-		return ('' != (string)$field->inputType) ? (string) $field->inputType : 'text';
-	}
-
-	/**
-	 * A simple type hint , need optimization
-	 *
-	 * @param unknown_type $field
-	 * @return unknown
-	 */
-	public function formatType($field)
-	{
-		$type = (string) $field;
-		if (strstr(strtoupper($type),'INT') || strstr(strtoupper($type),'TINYINT') ||  strstr(strtoupper($type),'SMALLINT') || strstr(strtoupper($type),'MEDIUMINT') || strstr(strtoupper($type),'BIGINT') || strstr(strtoupper($type),'FLOAT')
-		|| strstr(strtoupper($type),'DOUBLE') || strstr(strtoupper($type),'DECIMAL') || strstr(strtoupper($type),'BIT') || strstr(strtoupper($type),'BOOL'))
-		{
-			return 'number';
-		}
-		else
-		{
-			return 'alphanum';
-		}
-	}
-
 	public function renderPredefinedJs()
 	{
 		//$this->addJs('/scripts/jquery-1.3.2.min.js');
 		//$this->addScript('jQuery.noConflict();');
 	}
 
+	/**
+	 * Renders a list of predefined CSS Files
+	 * 
+	 */
 	public function renderPredefinedCss()
 	{
 		// Always add style.css
 		//$this->addCss('/styles/style.css');
 	}
 
+	/**
+	 * Renders a list of messages
+	 * 
+	 */
 	public function renderMessages()
 	{
 		$msg = $this->getMessage();
@@ -404,9 +573,9 @@ class CoreView extends ArrayObject
 	}
 
     /**
-     * TODO: short description.
+     * Returns the current module (application name)
      * 
-     * @return TODO
+     * @return string the module, Defaults to the constant MODULE
      */
     public function getModule()
     {

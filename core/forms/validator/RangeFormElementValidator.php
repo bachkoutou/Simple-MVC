@@ -1,31 +1,50 @@
 <?php
 /**
- * TODO: short description.
+ * Note : Code is released under the GNU LGPL
+ *
+ * Please do not change the header of this file 
+ *
+ * This library is free software; you can redistribute it and/or modify it under the terms of the GNU 
+ * Lesser General Public License as published by the Free Software Foundation; either version 2 of 
+ * the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; 
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. 
+ *
+ * See the GNU Lesser General Public License for more details.
+ */
+
+/**
+ * File:        RangeFormElementValidator.php
  * 
- * TODO: long description.
+ * @author      Anis BEREJEB
+ * @version     0.1
+ */
+
+/**
+ * Represents a range Element Validator
  * 
  */
 class RangeFormElementValidator extends FormElementValidator
 {
     /**
-     * TODO: description.
+     * Minimum value
      * 
-     * @var mixed
+     * @var int
      */
     public $min;
 
     /**
-     * TODO: description.
+     * Maximum value
      * 
-     * @var mixed
+     * @var int
      */
     private $max;
 
     /**
-     * TODO: short description.
+     * Minimum Setter
      * 
-     * @param  mixed  $min 
-     * @return TODO
+     * @param  int  $min The minimum 
      */
     public function setMin($min)
     {
@@ -33,9 +52,9 @@ class RangeFormElementValidator extends FormElementValidator
     }
 
     /**
-     * TODO: short description.
-     * 
-     * @return TODO
+     * Minimum Getter
+     *
+     * @return int The minimum value
      */
     public function getMin()
     {
@@ -43,10 +62,9 @@ class RangeFormElementValidator extends FormElementValidator
     }
 
     /**
-     * TODO: short description.
+     * Maximum Setter
      * 
-     * @param  mixed  $max 
-     * @return TODO
+     * @param  int  $max  The maximum value
      */
     public function setMax($max)
     {
@@ -54,9 +72,9 @@ class RangeFormElementValidator extends FormElementValidator
     }
 
     /**
-     * TODO: short description.
+     * Maximum Getter
      * 
-     * @return TODO
+     * @return int The maximum value
      */
     public function getMax()
     {
@@ -65,9 +83,9 @@ class RangeFormElementValidator extends FormElementValidator
 
 
     /**
-     * TODO: short description.
+     * Validates a range between min and max
      * 
-     * @return TODO
+     * @return boolean true on success, false on failure
      */
     public function validate()
     {

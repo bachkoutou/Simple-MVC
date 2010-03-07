@@ -1,14 +1,57 @@
 <?php
+/**
+ * Note : Code is released under the GNU LGPL
+ *
+ * Please do not change the header of this file 
+ *
+ * This library is free software; you can redistribute it and/or modify it under the terms of the GNU 
+ * Lesser General Public License as published by the Free Software Foundation; either version 2 of 
+ * the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; 
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. 
+ *
+ * See the GNU Lesser General Public License for more details.
+ */
+
+/**
+ * File:        Router.php
+ * 
+ * @author      Anis BEREJEB
+ * @version     0.1
+ */
+
+/**
+ * The router class
+ * 
+ */
 class Router
 {
 
-    protected $_controller, $_action, $_params;
+    /**
+     * Controller name
+     * 
+     * @var string
+     */
+    protected $_controller;
+    /**
+     * Action name
+     * 
+     * @var string
+     */
+    protected $_action;
+
+    /**
+     * Request params
+     * 
+     * @var array
+     */
+    protected $_params;
     
    /**
-     * TODO: short description.
+     * Controller name Setter
      * 
-     * @param  mixed  $controller 
-     * @return TODO
+     * @param  string  $controller The controller name 
      */
     public function setController($controller)
     {
@@ -16,10 +59,9 @@ class Router
     }
 
     /**
-     * TODO: short description.
+     * Action Setter 
      * 
-     * @param  array  $action 
-     * @return TODO
+     * @param  string  $action The action name
      */
     public function setAction($action)
     {
@@ -27,18 +69,21 @@ class Router
     }
 
     /**
-     * TODO: short description.
+     * Params Setter
      * 
-     * @param  mixed  $params 
-     * @return TODO
+     * @param  array  $params Additional params
      */
     public function setParams($params)
     {
         $this->_params = $params;
     }    
 
+    /**
+     * Executes a controller action
+     * @Exception thrown if the action does not exist
+     */
     public function route()
-    {     
+    {    
         // get the controller Object
         $controller = controllerFactory::getController($this->_controller, $this->_action);
 		$action = $this->_action . 'Action';		
@@ -96,17 +141,33 @@ class Router
             throw new Exception('you have to specify a valid action for the controller ' . $this->_controller);
         }
     }
+    
 
+    /**
+     * Params Getter
+     * 
+     * @return array params
+     */
     public function getParams()
     {
         return $this->_params;
     }
 
+    /**
+     * Controller name Getter
+     * 
+     * @return string the controller name
+     */
     public function getController()
     {
         return $this->_controller;
     }
 
+    /**
+     * Action Getter
+     * 
+     * @return string The action name
+     */
     public function getAction()
     {
         return $this->_action;

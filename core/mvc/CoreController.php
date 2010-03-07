@@ -1,4 +1,30 @@
 <?php
+/**
+ * Note : Code is released under the GNU LGPL
+ *
+ * Please do not change the header of this file 
+ *
+ * This library is free software; you can redistribute it and/or modify it under the terms of the GNU 
+ * Lesser General Public License as published by the Free Software Foundation; either version 2 of 
+ * the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; 
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. 
+ *
+ * See the GNU Lesser General Public License for more details.
+ */
+
+/**
+ * File:        CoreController.php
+ * 
+ * @author      Anis BEREJEB
+ * @version     0.1
+ */
+
+/**
+ * Represents the core controller
+ * 
+ */
 class CoreController implements IController
 {
 	/**
@@ -8,21 +34,43 @@ class CoreController implements IController
 	 */
 	public $view = null;
 	
-	// String executeView will tell if we want to bypass the view
+	/**
+	 * the view name 
+	 * 
+	 * @var string  Defaults to null. 
+	 */
 	private $_viewName = null;
 	
+	/**
+	 * the request
+	 * 
+	 * @var array
+	 */
 	public $request;
 	
-	private $_controllerName = null;
-	private $_actionName = null;
 	/**
+	 * the controller name
+	 * 
+	 * @var string  Defaults to null. 
+	 */
+	private $_controllerName = null;
+
+	/**
+	 * The action name
+	 * 
+	 * @var string  Defaults to null. 
+	 */
+	private $_actionName = null;
+
+    /**
      * array of the used variables. must be overriden
      * by child if need to access models
      *
      * @var array
      */
 	protected $_useModels = array();
-	/**
+	
+    /**
      * Initialises the models if any
      * Initialises the view
      *
@@ -54,7 +102,6 @@ class CoreController implements IController
 		// Generate the view
 		$viewName = $this->_controllerName;
 		$this->view = viewFactory::getView($viewName, $this->_actionName);
-
 		$this->view->setExtension('.php');
 		$this->view->setTemplate('default.php');
 	}
@@ -72,6 +119,16 @@ class CoreController implements IController
 		);
 	}
 
+	/**
+	 * Redirects to a new address based on controller/action arguments
+	 * 
+	 * @param  string $action      The action to redirect in
+	 * @param  string $controller  The controller, Optional, defaults to current controller. 
+	 * @param  string $message     A message to add in the request, Optional, defaults to ''. 
+	 * @param  string $messageType A message type, Optional, defaults to 'success'. 
+	 * @param  array  $params      An array of additional parameters, Optional, defaults to null. 
+	 * @return TODO
+	 */
 	public function redirect($action, $controller = null, $message = '', $messageType = 'success', $params = null)
 	{
 		if (!$action)
@@ -104,22 +161,42 @@ class CoreController implements IController
 
 	}
 
+	/**
+	 * Controller name Setter
+	 * 
+	 * @param  string  $controllerName The controller name - including the "Controller" suffix
+	 */
 	public function setControllerName($controllerName)
 	{
 		$parts = explode('Controller', $controllerName);
 		$this->_controllerName = $parts[0];
 	}
 
+	/**
+	 * Controller name Getter
+	 * 
+	 * @return string The controller name
+	 */
 	public function getControllerName()
 	{
 		return $this->_controllerName;
 	}
 
+	/**
+	 * Action name Setter
+	 * 
+	 * @param  string  $actionName The name of the action
+	 */
 	public function setActionName($actionName)
 	{
 		$this->_actionName = $actionName;
 	}
 
+	/**
+	 * Action name Getter
+	 * 
+	 * @return string The action name
+	 */
 	public function getActionName()
 	{
 		return $this->_actionName;

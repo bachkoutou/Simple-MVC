@@ -1,30 +1,51 @@
 <?php
 /**
- * TODO: short description.
+ * Note : Code is released under the GNU LGPL
+ *
+ * Please do not change the header of this file 
+ *
+ * This library is free software; you can redistribute it and/or modify it under the terms of the GNU 
+ * Lesser General Public License as published by the Free Software Foundation; either version 2 of 
+ * the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; 
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. 
+ *
+ * See the GNU Lesser General Public License for more details.
+ */
+
+/**
+ * File:        FormElementValidator.php
  * 
- * TODO: long description.
+ * @author      Anis BEREJEB
+ * @version     0.1
+ */
+
+/**
+ * Validator class for the form elements
  * 
  */
 abstract class FormElementValidator
 {
     /**
-     * TODO: description.
+     * The FormElement element
      * 
-     * @var mixed
+     * @var FormElement
      */
     protected $element;
 
     /**
-     * TODO: description.
+     * Message set on validation
      * 
-     * @var mixed
+     * @var string
      */
     protected $message;
 
     /**
-     * TODO: short description.
+     * constructor
+     * Sets the FormElement
      * 
-     * @param  FormElement  $element 
+     * @param  FormElement  $element The element to validate
      */
     public function __construct(FormElement $element)
     {
@@ -32,10 +53,9 @@ abstract class FormElementValidator
     }
     
     /**
-     * TODO: short description.
+     * Message Setter
      * 
-     * @param  mixed  $message 
-     * @return TODO
+     * @param  string  $message The message to set
      */
     protected function setMessage($message)
     {
@@ -43,9 +63,9 @@ abstract class FormElementValidator
     }    
 
     /**
-     * TODO: short description.
+     * Message Getter
      * 
-     * @return TODO
+     * @return string The message
      */
     public function getMessage()
     {
@@ -53,9 +73,11 @@ abstract class FormElementValidator
     }
     
     /**
-     * TODO: short description.
+     * Method to set the options of a form
+     * Takes an array with key as the property name 
+     * and value as the value. 
+     * Checks if there is a set{Key} defined and calls the method
      * 
-     * @return TODO
      */
     public function setOptions(array $options = array())
     {
@@ -73,14 +95,18 @@ abstract class FormElementValidator
     }
     
     /**
-     * TODO: short description.
+     * returns a Hint Message
      * 
-     * @return TODO
+     * @return string The hint message
      */
     public function getHintMessage()
     {
         return (property_exists($this, 'hintMessage')) ? $this->hintMessage : '';
     }
-
+    
+    /**
+     * Abstract method to validate the FormElement.
+     * Must be defined for each class implementing the FormElementValidator class
+     */
     abstract public function validate();
 }    

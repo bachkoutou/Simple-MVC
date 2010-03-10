@@ -1,16 +1,5 @@
-simpleMVC
---
-INSTALLATION :
-copy the conf/configuration-changeMe.php to conf/configuration.php and change the database credentials
-copy the conf/vhost-sample.conf to your vhosts and customize it with your proper domain
-restart/reload the config of your apache and  all is going
-
-
-
-GENERATOR :
-copy the generator/configuration-changeMe.php to generator/configuration.php and change the database credentials
-modify the generator/tables.xml to tell the generator what are the tables you want to generate. it presently contain one table called test.
-to generate your module simply type : php admingenerator.php <modulename>. This will generate a module called modulename under business. 
-to generate and admin module (containing an admin interface) type : php admingenerator.php admin 
-
-
+Simple MVC Framework 
+===================
+Simple MVC is a simple and lightweight PHP5 Framework that implements the MVC pattern. It presents also many features and functionnalities.
+Simple MVC is released under the GNU LGPL.
+Documentation, API and all information can be found at : http://simplemvc.berejeb.com

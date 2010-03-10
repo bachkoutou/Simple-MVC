@@ -1,63 +1,64 @@
 <?php
 /**
- * TODO: short description.
+ * Form class
  * 
- * TODO: long description.
- * 
+ * Represents a web form. Handles FormElements and renders the Form. 
+ * The Form is related with the model. Basically it takes a model in
+ * The constructor and binds the elements. 
+ * The Form class allows setting and getting the FormFields, setting 
+ * Validators and managing errors.
  */
 class Form
 {
     /**
-     * TODO: description.
+     * The model represented.
      * 
-     * @var mixed  Defaults to null. 
+     * @var CoreModel  Defaults to null. 
      */
     private $model = null;
     
     /**
-     * TODO: description.
+     * An array of the fields
      * 
-     * @var mixed  Defaults to array(). 
+     * @var array  Defaults to array(). 
      */
     protected $fields = array();
 
     /**
-     * TODO: description.
+     * An array of the fields keys
      * 
-     * @var mixed  Defaults to array(). 
+     * @var array  Defaults to array(). 
      */
     protected $keys = array();
     
 
     /**
-     * TODO: description.
+     * The errors
      * 
-     * @var mixed
+     * @var array Defaults to array()
      */
     private $errors = array();
 
     /**
-     * TODO: short description.
+     * Constructor, binds the model to the Form.
      * 
-     * @param  coreModel  $model 
+     * @param  coreModel  $model the model to represent
      */
     public function __construct(CoreModel $model)
     {
-        $this->model = $model;
-        $this->keys = $this->model->keys;
-        
-        $fields = $this->model->getFields();
+        $this->model        = $model;
+        $this->keys         = $this->model->keys;
+        $fields             = $this->model->getFields();
         $this->model->configure();
-        $configuredFields = $this->model->getTypes();
-        $validators = $this->model->getValidators();
+        $configuredFields   = $this->model->getTypes();
+        $validators         = $this->model->getValidators();
+        
         if (is_array($fields) && count($fields))
         {    
             foreach ($fields as $fieldName)
             {
                 if (!in_array($fieldName, $this->keys))
                 {    
-                    // build a text element by default
-                    // could be redefined by configure.
                     $type = isset($configuredFields[$fieldName]) ? $configuredFields[$fieldName] : 'text';
                     $element = FormElementFactory::getElement($type);
                     $element->setType($type);
@@ -70,20 +71,21 @@ class Form
         }
 
     }
+
     /**
-     * TODO: short description.
+     * field setter
      * 
-     * @param  mixed  $element 
-     * @return TODO
+     * @param  FormElement  $element 
      */
-    public function setField($element)
+    public function setField(FormElement $element)
     {
         $this->fields[$element->getName()] =$element;
-    }    
+    }
+
     /**
-     * TODO: short description.
+     * fields getter
      * 
-     * @return TODO
+     * @return array of FormFields
      */
     public function getFields()
     {
@@ -91,9 +93,9 @@ class Form
     }    
 
     /**
-     * TODO: short description.
+     * Binds FormValidators to a FormElement field
      * 
-     * accept an array in this format : 
+     * accepts an array in this format : 
      * array('fieldName' => array(
      *                      0 => array(
      *                          'class' => 'validatorClass', 
@@ -105,7 +107,6 @@ class Form
      *                          ),
      *                      )
      *                  );
-     * @return TODO
      */
     public function setValidators(FormElement $element, array $validators)
     {
@@ -132,9 +133,10 @@ class Form
     }
 
     /**
-     * TODO: short description.
+     * Executes the FormValidator::validate method on the fields.
+     * ans Sets Eventual Errors in Form::errors.
      * 
-     * @return TODO
+     * @return boolean true if there are errors, false if not.
      */
     public function validate()
     {
@@ -156,9 +158,9 @@ class Form
     }    
 
     /**
-     * TODO: short description.
+     * Errors getter
      * 
-     * @return TODO
+     * @return array of errors
      */
     public function getErrors()
     {
@@ -166,20 +168,9 @@ class Form
     }
 
     /**
-     * TODO: short description.
+     * Returns a context Link in relation to the model.
      * 
-     * @param  mixed  $errors 
-     * @return TODO
-     */
-    public function setErrors($errors)
-    {
-        $this->errors = $errors;
-    }
-
-    /**
-     * TODO: short description.
-     * 
-     * @return TODO
+     * @return string the context link
      */
     private function getContextLink()
     {

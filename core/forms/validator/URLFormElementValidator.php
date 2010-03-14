@@ -33,7 +33,16 @@ class URLFormElementValidator extends FormElementValidator
      * @var mixed  Defaults to "Should be a valid URL address". 
      */
     public $hintMessage = "Should be a valid URL address";
-    
+ 
+    /**
+     * an error message
+     * Can be Redefined on subclasses
+     * 
+     * @var string  Defaults to 'Element should be a valid email address'. 
+     */
+    public $message = 'Element should be a valid URL address';
+
+  
     /**
      * Validates an url
      * 
@@ -41,12 +50,7 @@ class URLFormElementValidator extends FormElementValidator
      */
     public function validate()
     {
-        if(!filter_var($this->element->getValue(), FILTER_VALIDATE_URL))
-        {
-            $this->setMessage('Element should be a valid URL address');
-            return false;
-        }
-        return true;
+        return (filter_var($this->element->getValue(), FILTER_VALIDATE_URL)) ? true : false;
     }    
 }
             

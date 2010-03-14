@@ -698,7 +698,7 @@ class CoreModel extends ArrayIterator
         foreach ($this->getFields() as $property)
         {
             $this->setValidator($property, array('class' => 'NotEmpty'));
-            $this->setPropertyInputType($property, 'text');
+            $this->setPropertyInputType($property, array('type' => 'text', 'attributes'=> array()));
         }    
     } 
 
@@ -720,7 +720,7 @@ class CoreModel extends ArrayIterator
      */
     public function setValidator($property, array $validation)
     {
-        if (property_exists($this, $property) && isset($this->$property))
+        if (property_exists($this, $property))
         {
             $this->validators[$property][$validation['class']] = $validation;
         }
@@ -730,11 +730,12 @@ class CoreModel extends ArrayIterator
      * Sets a type to a given property
      * 
      * @param  string  $property 
-     * @param  string  $type     
+     * @param  array  $type should be an array in this form :
+     *                      array('type' => $type, 'attributes' => $attributes)
      */
-    protected function setPropertyInputType($property, $type)
-    {
-        if ($this->$property && in_array($type, FormElement::$allowedInputTypes)) 
+    protected function setPropertyInputType($property, array $type)
+    {   
+        if (property_exists($this, $property) && in_array($type['type'], FormElement::$allowedInputTypes)) 
         {
             $this->types[$property] = $type;
         }    

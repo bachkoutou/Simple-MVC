@@ -33,6 +33,14 @@ class EmailFormElementValidator extends FormElementValidator
      * @var string  Defaults to "Should be a valid email address". 
      */
     public $hintMessage = "Should be a valid email address";
+
+    /**
+     * an error message
+     * Can be Redefined on subclasses
+     * 
+     * @var string  Defaults to 'Element should be a valid email address'. 
+     */
+    public $message = 'Element should be a valid email address';
     
     /**
      * Validates the element
@@ -41,12 +49,7 @@ class EmailFormElementValidator extends FormElementValidator
      */
     public function validate()
     {
-        if(!filter_var($this->element->getValue(), FILTER_VALIDATE_EMAIL))
-        {
-            $this->setMessage('Element should be a valid email address');
-            return false;
-        }
-        return true;
+        return (filter_var($this->element->getValue(), FILTER_VALIDATE_EMAIL)) ? true : false;
     }    
 }
             

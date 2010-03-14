@@ -40,7 +40,7 @@ class RangeFormElementValidator extends FormElementValidator
      * @var int
      */
     private $max;
-
+    
     /**
      * Minimum Setter
      * 
@@ -80,7 +80,6 @@ class RangeFormElementValidator extends FormElementValidator
     {
         return $this->max;
     }
-
 
     /**
      * Validates a range between min and max

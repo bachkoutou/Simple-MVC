@@ -44,7 +44,7 @@ class Form
      * 
      * @param  coreModel  $model the model to represent
      */
-    public function __construct(CoreModel $model)
+    public function initFromModel(CoreModel $model)
     {
         $this->model        = $model;
         $this->keys         = $this->model->keys;
@@ -59,9 +59,10 @@ class Form
             {
                 if (!in_array($fieldName, $this->keys))
                 {    
-                    $type = isset($configuredFields[$fieldName]) ? $configuredFields[$fieldName] : 'text';
+                    $type = isset($configuredFields[$fieldName]) ? $configuredFields[$fieldName]['type'] : 'text';
                     $element = FormElementFactory::getElement($type);
                     $element->setType($type);
+                    $element->setAttributes($configuredFields[$fieldName]['attributes']);
                     $element->setName($fieldName);
                     $element->setValue($model->$fieldName);
                     $this->setValidators($element, $validators);
@@ -71,6 +72,15 @@ class Form
         }
 
     }
+
+    /**
+     * Initialises the form from an array of form elements
+     * 
+     * @param  array  $formElementsArray An array of form Elements
+     */
+    public function initFromFormElementsArray(array $formElementsArray)
+    {
+    }    
 
     /**
      * field setter

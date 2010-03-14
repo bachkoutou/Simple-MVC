@@ -35,18 +35,21 @@ class IntFormElementValidator extends FormElementValidator
     public $hintMessage = "Should be an integer";
 
     /**
+     * an error message
+     * Can be Redefined on subclasses
+     * 
+     * @var string  Defaults to 'Element should be a valid integer'. 
+     */
+    public $message = 'Element should be an Integer';
+
+    /**
      * Validates an integer value
      * 
      * @return boolean true on success, false on failure
      */
     public function validate()
     {
-        if(!filter_var($this->element->getValue(), FILTER_VALIDATE_INT))
-        {
-            $this->setMessage('Element should be an integer');
-            return false;
-        }
-        return true;
+        return (filter_var($this->element->getValue(), FILTER_VALIDATE_INT)) ? true : false;
     }    
 }
             

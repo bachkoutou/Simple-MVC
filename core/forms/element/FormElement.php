@@ -106,7 +106,7 @@ abstract class FormElement
         $string = '';
         if (is_array($this->attributes) && count($this->attributes))
         {
-            foreach ($this->attribues as $keya => $value)
+            foreach ($this->attributes as $key => $value)
             {
                 $string.= ' ' . $key . '=' . '"' . $value . '"';
             }    
@@ -235,7 +235,7 @@ abstract class FormElement
             {
                 $string.= ", {$validator->getHintMessage()}";
             }
-            echo trim(trim($string, ','));
+            echo trim(trim($string, ', '));
         }
     }    
 

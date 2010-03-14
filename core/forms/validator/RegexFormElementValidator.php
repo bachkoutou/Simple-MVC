@@ -28,6 +28,21 @@
 class RegexFormElementValidator extends FormElementValidator
 {
     /**
+     * a hint Message
+     * Could be redefined on child classes
+     * @var string  Defaults to ''. 
+     */
+    public $hintMessage = '';
+    
+    /**
+     * an error Message
+     * Could be redefined on child classes 
+     *
+     * @var string  Defaults to 'Invalid Value'. 
+     */
+    public $message = 'Invalid Value';
+    
+    /**
      * The regular expression to be applied
      * 
      * @var string
@@ -61,12 +76,7 @@ class RegexFormElementValidator extends FormElementValidator
      */
     public function validate()
     {
-        if (filter_var($this->element->getValue(), FILTER_VALIDATE_REGEXP, array("options"=>array("regexp" => $this->regexp))))
-        {
-            $this->setMessage('Invalid value');
-            return false;
-        }
-        return true;
+        return (preg_match($this->regexp, $this->element->getValue())) ? true : false;
     }    
 }
             

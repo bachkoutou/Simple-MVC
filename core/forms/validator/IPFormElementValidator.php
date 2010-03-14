@@ -33,6 +33,15 @@ class IPFormElementValidator extends FormElementValidator
      * @var string  Defaults to "Should be a valid IP address". 
      */
     public $hintMessage = "Should be a valid IP address";
+
+    /**
+     * an error message
+     * Can be Redefined on subclasses
+     * 
+     * @var string  Defaults to 'Element should be a valid IP address'. 
+     */
+    public $message = 'Element should be a valid IP address';
+
     /**
      * Validates an IP address
      * 
@@ -40,12 +49,7 @@ class IPFormElementValidator extends FormElementValidator
      */
     public function validate()
     {
-        if(!filter_var($this->element->getValue(), FILTER_VALIDATE_IP))
-        {
-            $this->setMessage('Element should be a valid IP address');
-            return false;
-        }
-        return true;
+        return (filter_var($this->element->getValue(), FILTER_VALIDATE_IP)) ? true : false;
     }    
 }
             

@@ -33,6 +33,14 @@ class FloatFormElementValidator extends FormElementValidator
      * @var string  Defaults to "Float number, i.e. 1.0, 2 etc.". 
      */
     public $hintMessage = "Float number, i.e. 1.0, 2 etc.";
+
+    /**
+     * an error message
+     * Can be Redefined on subclasses
+     * 
+     * @var string  Defaults to 'Element should be a valid float number'. 
+     */
+    public $message = 'Element should be a valid float number';
     
     /**
      * Validates a float value
@@ -41,12 +49,7 @@ class FloatFormElementValidator extends FormElementValidator
      */
     public function validate()
     {
-        if(!filter_var($this->element->getValue(), FILTER_VALIDATE_FLOAT))
-        {
-            $this->setMessage('Element should be a valid Float number');
-            return false;
-        }
-        return true;
+        return (filter_var($this->element->getValue(), FILTER_VALIDATE_FLOAT)) ? true : false;
     }    
 }
             

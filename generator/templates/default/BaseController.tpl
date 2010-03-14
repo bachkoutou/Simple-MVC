@@ -61,7 +61,8 @@ class Base{objectName}Controller extends MainController
         $this->{objectName}Model->bind($params);
         $this->{objectName}Model->checkin();
         $this->view->model = $this->{objectName}Model;
-        $this->view->form = new {objectName}Form($this->{objectName}Model);
+        $this->view->form = new {objectName}Form();
+        $this->view->form->initFromModel($this->{objectName}Model);
     }
 
     /**
@@ -74,7 +75,8 @@ class Base{objectName}Controller extends MainController
         $this->{objectName}Model->bind($params);
         $this->{objectName}Model->checkin();
         $this->view->model = $this->{objectName}Model;
-        $this->view->form = new {objectName}Form($this->{objectName}Model);
+        $this->view->form = new {objectName}Form();
+        $this->view->form->initFromModel($this->{objectName}Model);
         // Handle eventual errors
         $params = $this->Dispatcher->getParams();
         if (isset($params['errors']) && is_array($params['errors']))
@@ -92,11 +94,11 @@ class Base{objectName}Controller extends MainController
         $this->{objectName}Model->bind($params);
         if ($this->{objectName}Model->delete())
         {
-            $this->Router->redirect('list', {objectName},  "Item deleted successfully", CoreView::MESSAGE_TYPE_SUCCESS);
+            $this->Router->redirect('list', '{objectName}',  "Item deleted successfully", CoreView::MESSAGE_TYPE_SUCCESS);
         }
         else
         {
-            $this->Router->redirect('list', {objectName},  "Item could not be deleted", CoreView::MESSAGE_TYPE_ERROR);
+            $this->Router->redirect('list', '{objectName}',  "Item could not be deleted", CoreView::MESSAGE_TYPE_ERROR);
         }
         exit();
     }
@@ -104,22 +106,23 @@ class Base{objectName}Controller extends MainController
     public function saveAction()
     {
         $this->{objectName}Model->bind($this->Dispatcher->getParams());
-        $form = new {objectName}Form($this->{objectName}Model);
+        $form = new {objectName}Form();
+        $form->initFromModel($this->{objectName}Model);
         if ($form->validate())
         {    
             if ($this->{objectName}Model->save())
             {
-                $this->Router->redirect('list', {objectName}, "Item saved successfully", CoreView::MESSAGE_TYPE_SUCCESS);
+                $this->Router->redirect('list', '{objectName}', "Item saved successfully", CoreView::MESSAGE_TYPE_SUCCESS);
             }
             else
             {
-                $this->Router->redirect('list', {objectName}, "Item could not be saved", CoreView::MESSAGE_TYPE_ERROR);
+                $this->Router->redirect('list', '{objectName}', "Item could not be saved", CoreView::MESSAGE_TYPE_ERROR);
             }
         }
         else
         {
             $params = array_merge(array('id' => $this->{objectName}Model->id, 'errors' => $form->getErrors()));
-             $this->redirect('edit', null, "Item could not be saved", CoreView::MESSAGE_TYPE_ERROR, $params);
+             $this->Router->redirect('edit', '{objectName}', "Item could not be saved", CoreView::MESSAGE_TYPE_ERROR, $params);
         }
         exit();
 

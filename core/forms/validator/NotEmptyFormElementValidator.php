@@ -33,6 +33,15 @@ class NotEmptyFormElementValidator extends FormElementValidator
      * @var mixed  Defaults to "*". 
      */
     public $hintMessage = "*";
+
+    /**
+     * an error message
+     * Can be Redefined on subclasses
+     * 
+     * @var string  Defaults to 'Element should not be empty'. 
+     */
+    public $message = 'Element should be not be empty';
+
     /**
      * Validates a not empty value
      * 0 will pass.
@@ -41,12 +50,7 @@ class NotEmptyFormElementValidator extends FormElementValidator
      */
     public function validate()
     {
-        if('' == $this->element->getValue())
-        {
-            $this->setMessage('Element should not be empty');
-            return false;
-        }
-        return true;
+        return ('' != $this->element->getValue()) ? true : false;
     }    
 }
             

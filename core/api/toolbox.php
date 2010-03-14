@@ -76,7 +76,7 @@ class Toolbox
         foreach ($params as $key => $param)
         {
             $key = stripslashes($key);
-            $param = stripslashes($param);
+            $param = (is_array($param)) ? self::cleanParameters($param) : stripslashes($param);
             $clean[$key] = $param;
         }
         return $clean;

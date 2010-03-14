@@ -85,9 +85,9 @@ abstract class FormElementValidator
         {
             foreach ($options as $key => $option)
             {
-                if (property_exists($this, $key))
+                $method = 'set' . ucfirst($key);
+                if (method_exists($this, $method))
                 {
-                    $method = 'set' . ucfirst($key);
                     $this->$method($option);
                 }
             }
@@ -101,7 +101,7 @@ abstract class FormElementValidator
      */
     public function getHintMessage()
     {
-        return (property_exists($this, 'hintMessage')) ? $this->hintMessage : '';
+        return (property_exists($this, 'hintMessage') && !empty($this->hintMessage)) ? $this->hintMessage : '';
     }
     
     /**

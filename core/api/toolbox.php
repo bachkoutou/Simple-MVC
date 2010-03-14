@@ -63,4 +63,22 @@ class Toolbox
 		}
 		return $arr;
 	}	
+
+    /**
+     * TODO: short description.
+     * 
+     * @param  mixed    
+     * @return TODO
+     */
+    public static function cleanParameters(array $params = array())
+    {
+        $clean = array();
+        foreach ($params as $key => $param)
+        {
+            $key = stripslashes($key);
+            $param = stripslashes($param);
+            $clean[$key] = $param;
+        }
+        return $clean;
+    }    
 }

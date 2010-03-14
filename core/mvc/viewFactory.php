@@ -31,10 +31,9 @@ class viewFactory
      * the view should be located under BUSINESS/VIEWS_PATH/
      * 
      * @param  string  $viewName   The view name
-     * @param  string  $actionName  The action name
      * @return CoreView the view on sucess or MainView
      */
-    public static function getview($viewName,$actionName)
+    public static function getview($viewName)
     {
     	$viewFile = BUSINESS . DS . VIEWS_PATH . $viewName . '.php';
 
@@ -44,7 +43,7 @@ class viewFactory
             require_once($viewFile);
             if(class_exists($viewNameView))
             {
-                return new $viewNameView($viewName,$actionName);
+                return new $viewNameView($viewName);
             }
         }
         return new MainView($viewName);

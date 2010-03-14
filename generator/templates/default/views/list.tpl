@@ -38,7 +38,7 @@
     <tr>
         <td colspan="10" align="center">
         <?php
-            $this->model->renderPagination();
+            $this->model->renderPagination($this->offset);
         ?>
         </td>
     </tr>

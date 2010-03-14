@@ -55,7 +55,7 @@ class frontDispatcher
      * @var frontDispatcher
      */
     static $_instance;
-
+    
     /**
      * Returns the instance of the dispatcher
      * 
@@ -69,29 +69,32 @@ class frontDispatcher
         }
         return self::$_instance;
     }
-
+    
     /**
      * private constructor
      * 
      */
     private function __construct()
     {
-        $this->_controller = !empty($_REQUEST['controller']) ? $_REQUEST['controller'] . 'Controller' : 'mainController';
-        $this->_action = !empty($_REQUEST['action']) ? $_REQUEST['action']  : 'index';
-        $this->_params = $_REQUEST;
-        $this->router = new Router();
+        $clean = Toolbox::cleanParameters($_REQUEST);
+        $this->_controller = !empty($clean['controller']) ? $clean['controller'] . 'Controller' : 'mainController';
+        $this->_action = !empty($clean['action']) ? $clean['action']  : 'index';
+        $this->_params = $clean;
+        $this->router  = new Router();
         $this->router->setController($this->_controller);
         $this->router->setAction($this->_action);
-        $this->router->setParams($_REQUEST);
+        $this->router->setParams($clean);
     }
-    
+   
     /**
      * Route function
-     * 
+     *
+     * @param Container $container The injection Container 
      */
-    public function route()
+    public function route(Container $container)
     {
-        $this->router->route();
+        $container['Dispatcher'] = $this;
+        $this->router->route($container);
     }
 
     /**

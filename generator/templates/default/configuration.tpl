@@ -52,3 +52,7 @@ define('DB_TYPE', 'mysql');
  define('AUTOLOAD_SAVE_PATH', '/tmp');
  /**** CONTROLLER *****/
  define('CONTROLLER_LIST_DEFAULT_NUMBER', 10);
+ /*** CACHE **********/
+ define ('DEFAULT_CACHE_TYPE', 'Array');
+ define ('DEFAULT_CACHE_PREFIX', '{moduleName}');
+

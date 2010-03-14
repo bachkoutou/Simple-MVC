@@ -132,18 +132,10 @@ class CoreView extends ArrayObject
 	 * Constructor
 	 * 
 	 * @param  string $controller The controller name
-	 * @param  string $action     The action name, Optional, defaults to 'list'. 
-	 * @param  string  $extension The default views extension,  Optional, defaults to '.php'. 
 	 */
-	public function __construct($controller, $action = 'list', $extension = '.php')
+	public function __construct()
 	{
 		parent::__construct(array(), ArrayObject::ARRAY_AS_PROPS);
-		$this->setController($controller);
-		$this->setAction($action);
-		$this->setExtension($extension);
-		// Check if there is a css file or a js file to include, if yes, include it
-		$this->autoIncludeJs();
-		$this->autoIncludeCss();
 	}
 
 	/**
@@ -163,9 +155,9 @@ class CoreView extends ArrayObject
 	 */
 	public function main()
 	{
-		$viewName  = ($this->getViewName()) ? $this->getViewName() : $this->getAction();
-		$file = BUSINESS . DS .  VIEWS_PATH . $this->getController() . DS . $viewName  . $this->getExtension();
-		echo $this->load($file);
+		$viewName  = ($this->getViewName()) ? $this->getViewName() : $this->getViewName();
+        $file = BUSINESS . DS .  VIEWS_PATH . $this->getController() . DS . $viewName  . $this->getExtension();
+        echo $this->load($file);
 	}
 
 	/**
@@ -177,7 +169,7 @@ class CoreView extends ArrayObject
 	public function render($action = null, $controller = null)
 	{
 		(!$controller) ? $controller = $this->getController() : 'main';
-		if (!$action)  $action = $this->getAction() ;
+		if (!$action)  $action = $this->getViewName() ;
 		$file = BUSINESS . DS .  VIEWS_PATH . $controller . DS . $action  . $this->getExtension();
 		echo $this->load($file);
 	}
@@ -271,26 +263,6 @@ class CoreView extends ArrayObject
 	{
 		return $this->_controller;
 	}
-
-	/**
-	 * Action name Setter
-	 * 
-	 * @param  string  $action The Action name 
-	 */
-	public function setAction($action)
-	{
-		$this->_action = $action;
-	}
-
-	/**
-	 * Action name Getter
-	 * 
-	 * @return string The action name
-	 */
-	public function getAction()
-	{
-		return $this->_action;
-	}
 	
 	/**
 	 * View name Setter
@@ -319,7 +291,7 @@ class CoreView extends ArrayObject
 	 */
 	public function getName()
 	{
-		return $this->getController();
+		return $this->_controller;
 	}
 
 	/**
@@ -503,7 +475,7 @@ class CoreView extends ArrayObject
 		}
 
 		// include files in The styles/{module}/{controller}/{action} file
-		$file = 'scripts/' . $this->getModule() . '/' . $this->getController() . '/' . $this->getAction() . '.js';
+		$file = 'scripts/' . $this->getModule() . '/' . $this->getController() . '/' . $this->getViewName() . '.js';
 		if (file_exists(WEB . $file))
 		{
 			$this->addJs('/' . $file);
@@ -531,7 +503,7 @@ class CoreView extends ArrayObject
 		}
 
 		// include files in The styles/{module}/{controller}/{action} file
-		$file = 'styles/' . $this->getModule() . '/' . $this->getController() . '/' . $this->getAction() . '.css';
+		$file = 'styles/' . $this->getModule() . '/' . $this->getController() . '/' . $this->getViewName() . '.css';
 		if (file_exists(WEB . $file))
 		{
 			$this->addCss('/' . $file);

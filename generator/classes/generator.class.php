@@ -66,8 +66,9 @@ class Generator
 		$this->setModulePath($module);
 		$this->_connection = new PDODatabase(BACK_DB_HOST, BACK_DB_DATABASE, BACK_DB_USER, BACK_DB_PASSWORD);
 		$this->generateMainController();
-		$this->generateMainView();
-		$this->generateMainTemplate();
+		$this->generateModuleContainer($module);
+        $this->generateMainView();
+        $this->generateMainTemplate();
         $this->generateWebRoot($module);
         $this->generateConfigurationFile($module);
 	}
@@ -260,6 +261,22 @@ class Generator
             $controllerTemplate = str_replace('{objectName}', ucfirst($tableName), $controllerTemplate);
             Toolbox::saveFileWithContent($fileName, $controllerTemplate);
         }
+
+    }
+    /**
+     * Generates the module Container
+     */
+    private function generateModuleContainer($moduleName)
+    {
+        
+        $fileName = $this->_modulePath . MF_CONTAINER_FOLDER . ucfirst($moduleName) . "Container.php";
+        if (!file_exists($fileName))
+        {    
+            $containerTemplate = $this->getMVCTemplate('ModuleContainer');
+            $containerTemplate = str_replace('{moduleName}', ucfirst($moduleName), $containerTemplate);
+            Toolbox::saveFileWithContent($fileName, $containerTemplate);
+        }
+
 
     }
 

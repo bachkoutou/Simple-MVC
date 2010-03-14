@@ -70,42 +70,6 @@ class CoreController implements IController
      */
 	protected $_useModels = array();
 	
-    /**
-     * Initialises the models if any
-     * Initialises the view
-     *
-     * @param string $controllerName the name of the controller | default : 'main'
-     */
-	public function __construct($controllerName = 'main', $actionName = 'list')
-	{
-		$dispatcher = frontDispatcher::getInstance();
-		$this->request = $dispatcher->getParams();
-		$this->setControllerName($controllerName);
-		$this->setActionName($actionName);
-
-		// initialize models
-        // include relationModel if exists
-        if (class_exists('relationModel'))
-        {
-            $this->relationModel = new relationModel($modelName);
-        }    
-
-		if (0 < count($this->_useModels))
-		{
-			foreach ($this->_useModels as $model)
-			{
-				$modelName = $model . 'Model';
-				$this->$modelName = modelFactory::getModel($modelName);
-			}
-
-		}
-		// Generate the view
-		$viewName = $this->_controllerName;
-		$this->view = viewFactory::getView($viewName, $this->_actionName);
-		$this->view->setExtension('.php');
-		$this->view->setTemplate('default.php');
-	}
-
 	/**
      * always function, to be executed every time
      *
@@ -119,68 +83,17 @@ class CoreController implements IController
 		);
 	}
 
-	/**
-	 * Redirects to a new address based on controller/action arguments
-	 * 
-	 * @param  string $action      The action to redirect in
-	 * @param  string $controller  The controller, Optional, defaults to current controller. 
-	 * @param  string $message     A message to add in the request, Optional, defaults to ''. 
-	 * @param  string $messageType A message type, Optional, defaults to 'success'. 
-	 * @param  array  $params      An array of additional parameters, Optional, defaults to null. 
-	 * @return TODO
-	 */
-	public function redirect($action, $controller = null, $message = '', $messageType = 'success', $params = null)
-	{
-		if (!$action)
-		{
-			return false;
-		}
-
-		if(!$controller)
-		{
-			$controller = $this->getControllerName();
-		}
-		if('' != $message)
-		{
-			$message= '&message=' . $message . '&messageType=' . $messageType;
-		}
-        if ($params)
-        {
-            $paramsString = http_build_query($params);
-        }    
-        else
-        {
-            $paramsString = '';
-        }    
-		if (method_exists($this, $action . 'Action'))
-		{
-			header("location: /?controller=$controller&action=$action&$message&$paramsString");
-			exit();
-		}
-		return false;
-
-	}
-
-	/**
-	 * Controller name Setter
-	 * 
-	 * @param  string  $controllerName The controller name - including the "Controller" suffix
-	 */
-	public function setControllerName($controllerName)
-	{
-		$parts = explode('Controller', $controllerName);
-		$this->_controllerName = $parts[0];
-	}
-
-	/**
-	 * Controller name Getter
-	 * 
-	 * @return string The controller name
-	 */
-	public function getControllerName()
-	{
-		return $this->_controllerName;
-	}
+    /**
+     * Inject dependencies of the Controller
+     * 
+     * @param  Container  $container The Container
+     */
+    public function setContainer(Container $container)
+    {
+        $this->Router = $container['Router'];
+        $this->Dispatcher = $container['Dispatcher'];
+        $this->CacheManager = $container['CacheManager'];
+    } 
 
 	/**
 	 * Action name Setter
@@ -202,4 +115,33 @@ class CoreController implements IController
 		return $this->_actionName;
 	}
 
+    /**
+     * Returns the used models 
+     * 
+     * @return array of used models
+     */
+    public function getUsedModels()
+    {
+        return $this->_useModels;
+    }    
+    
+    /**
+     * Sets a model to the controller
+     * 
+     * @param  CoreModel  $model The model
+     */
+    public function setModel(CoreModel $model)
+    {
+        $this->{$model->getModelName()} = $model;
+    }
+
+    /**
+     * Sets a view to the controller
+     * 
+     * @param  CoreView  $view The view to be set
+     */
+    public function setView(CoreView $view)
+    {
+        $this->view = $view;
+    }    
 }

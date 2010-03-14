@@ -639,17 +639,16 @@ class CoreModel extends ArrayIterator
 
     /**
      * Echoes the pagination links
-     * 
+     * @param $offset The offset Defaults to 0
      * @return string
      */
-    public function renderPagination()
+    public function renderPagination($offset = 0)
     {
         $pagination = $this->getPagination();
         if (is_array($pagination->links))
         {    
             // render total 
             $string = 'Total pages (' . $pagination->pages . ') :  ' ;
-            $offset = ToolBox::getArrayParameter($_REQUEST, 'offset', 0);
             // render previous link
             if (isset($pagination->links[$offset]->previous))
             {

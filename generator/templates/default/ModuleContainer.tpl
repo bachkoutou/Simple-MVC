@@ -1,4 +1,4 @@
-<?php 
+<?php
 /**
  * Note : Code is released under the GNU LGPL
  *
@@ -15,32 +15,21 @@
  */
 
 /**
- * File:        controllerFactory.php
+ * File:        {moduleName}Container.php
  * 
  * @author      Anis BEREJEB
- * @version     0.1
+ * 
  */
 
 /**
- * Controller Factory
+ * Dependency Container for the {moduleName} Module
+ * Extends the Container Class
+ * Inject any other dependencies to the object
+ * set methodes with a get prefix to build the objects
+ * (i.e. getCacheManager builds the CacheManager object)
  * 
  */
-class controllerFactory
+class {moduleName}Container extends Container
 {
-	/**
-	 * Returns the appropriate controller based on the controller name
-     *
-	 * 
-	 * @param  string $controllerName The controller name
-	 * @return CoreController The controller, Defaults to Maincontroller.
-	 */
-	public static function getController($controllerName)
-	{
-		$dispatcher = FrontDispatcher::getInstance();
-		if(class_exists($controllerName))
-		{
-			return new $controllerName();
-		}
-		return new MainController();
-	}
+
 }

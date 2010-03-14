@@ -47,8 +47,9 @@ class Router
      * @var array
      */
     protected $_params;
-    
-   /**
+ 
+ 
+    /**
      * Controller name Setter
      * 
      * @param  string  $controller The controller name 
@@ -82,16 +83,38 @@ class Router
      * Executes a controller action
      * @Exception thrown if the action does not exist
      */
-    public function route()
+    public function route(Container $container)
     {    
         // get the controller Object
-        $controller = controllerFactory::getController($this->_controller, $this->_action);
-		$action = $this->_action . 'Action';		
+        $controller = controllerFactory::getController($this->_controller);
+        // inject any dependencies to the controller
+        $container['Router'] = $this;
+        $controller->setContainer($container);
+        
+        $controller->setActionName($this->_action);
+        $usedModels = $controller->getUsedModels();
+        
+        if (0 < count($usedModels))
+        {
+            foreach ($usedModels as $model)
+            {
+                $modelName = $model . 'Model';
+                $controller->setModel(modelFactory::getModel($modelName));
+            }
+
+        }
+        $view = viewFactory::getView($this->_controller);
+        $view->setController($this->_controller);
+        $view->setViewName($this->_action);
+        $view->setExtension('.php');
+        $view->setTemplate('default.php');
+        $view->autoIncludeJs();
+        $view->autoIncludeCss();
+        $controller->setView($view);
+
+		$action = $this->_action . 'Action';	
         if (method_exists($controller, $action))
         {
-        	/**
-        	 * Hook mechanism
-        	 */
         	// execute always action every time, 
         	$controller->alwaysAction();
         	
@@ -114,16 +137,17 @@ class Router
             
         	// Execute the view action . _executeView will indicate which view to execute
         	// if we indicate it via Controller::setView(view);
-        	if (!$controller->view->getViewName())
+        	$setViewName = $controller->view->getViewName();
+            if (method_exists($controller->view, $setViewName))
         	{
-                if (method_exists($controller->view, $action))
-                {   
-        		    $controller->view->$action();
-                }
+        		$controller->view->$setViewName();
         	}
         	else 
         	{
-        		$controller->view->{$controller->view->getViewName()}();
+                if (method_exists($controller->view, $action))
+                {
+        		    $controller->view->$action();
+                }
         	}
         	// render the template
         	if (true === $controller->view->renderTemplate)
@@ -142,6 +166,44 @@ class Router
         }
     }
     
+
+    /**
+     * Redirects to a new address based on controller/action arguments
+     * 
+     * @param  string $action      The action to redirect in
+     * @param  string $controller  The controller, Optional, defaults to current controller. 
+     * @param  string $message     A message to add in the request, Optional, defaults to ''. 
+     * @param  string $messageType A message type, Optional, defaults to 'success'. 
+     * @param  array  $params      An array of additional parameters, Optional, defaults to null. 
+     * @return TODO
+     */
+    public function redirect($action, $controller = null, $message = '', $messageType = 'success', $params = null)
+    {
+        if (!$action)
+        {
+            return false;
+        }
+
+        if('' != $message)
+        {
+            $message= '&message=' . $message . '&messageType=' . $messageType;
+        }
+        if ($params)
+        {
+            $paramsString = http_build_query($params);
+        }    
+        else
+        {
+            $paramsString = '';
+        }   
+        if (method_exists($controller . 'Controller', $action . 'Action'))
+        {
+            header("location: /?controller=$controller&action=$action&$message&$paramsString");
+            exit();
+        }
+        return false;
+
+    }
 
     /**
      * Params Getter

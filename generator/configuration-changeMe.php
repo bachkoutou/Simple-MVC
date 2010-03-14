@@ -64,6 +64,7 @@ define('MF_CONTROLLERS_FOLDER', 'controllers' . DS);
 define('MF_LIBRARIES_FOLDER', 'libraries' . DS);
 define('MF_VIEWS_FOLDER', 'views' . DS);
 define('MF_FORMS_FOLDER', 'forms' . DS);
+define('MF_CONTAINER_FOLDER', 'Container' . DS);
 define('MF_MVC_TPL_FOLDER', 'templates' . DS);
 
 /**

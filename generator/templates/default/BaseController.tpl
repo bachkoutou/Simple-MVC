@@ -44,12 +44,11 @@ class Base{objectName}Controller extends MainController
     public function listAction($where = null, $orderBy = null, $offset = 0, $limit = 0)
     {
         $this->{objectName}Model->setItemsPerPage(CONTROLLER_LIST_DEFAULT_NUMBER);
-        $this->{objectName}Model->offset = ToolBox::getArrayParameter($_REQUEST, 'offset', $offset);;
         $this->view->model = $this->{objectName}Model;
         $this->view->where = $where;
         $this->view->orderBy = $orderBy;
-        $this->view->offset = $offset;
         $this->view->limit = $limit;
+        $this->view->offset = ToolBox::getArrayParameter($this->Dispatcher->getParams(), 'offset', $offset);;
     }
 
     /**
@@ -58,7 +57,7 @@ class Base{objectName}Controller extends MainController
     public function detailAction()
     {
         $fields = $this->{objectName}Model->getPublicProperties();
-        $params = frontDispatcher::getInstance()->getParams();
+        $params = $this->Dispatcher->getParams();
         $this->{objectName}Model->bind($params);
         $this->{objectName}Model->checkin();
         $this->view->model = $this->{objectName}Model;
@@ -71,15 +70,16 @@ class Base{objectName}Controller extends MainController
     public function editAction()
     {
         $fields = $this->{objectName}Model->getPublicProperties();
-        $params = frontDispatcher::getInstance()->getParams();
+        $params = $this->Dispatcher->getParams();
         $this->{objectName}Model->bind($params);
         $this->{objectName}Model->checkin();
         $this->view->model = $this->{objectName}Model;
         $this->view->form = new {objectName}Form($this->{objectName}Model);
         // Handle eventual errors
-        if (isset($_REQUEST['errors']) && is_array($_REQUEST['errors']))
+        $params = $this->Dispatcher->getParams();
+        if (isset($params['errors']) && is_array($params['errors']))
         {
-            $this->view->form->setErrors($_REQUEST['errors']);
+            $this->view->form->setErrors($params['errors']);
         }    
     }
 
@@ -88,32 +88,32 @@ class Base{objectName}Controller extends MainController
      */
     public function deleteAction()
     {
-        $params = frontDispatcher::getInstance()->getParams();
+        $params = $this->Dispatcher->getParams();
         $this->{objectName}Model->bind($params);
         if ($this->{objectName}Model->delete())
         {
-            $this->redirect('list', null,  "Item deleted successfully", CoreView::MESSAGE_TYPE_SUCCESS);
+            $this->Router->redirect('list', {objectName},  "Item deleted successfully", CoreView::MESSAGE_TYPE_SUCCESS);
         }
         else
         {
-            $this->redirect('list', null,  "Item could not be deleted", CoreView::MESSAGE_TYPE_ERROR);
+            $this->Router->redirect('list', {objectName},  "Item could not be deleted", CoreView::MESSAGE_TYPE_ERROR);
         }
         exit();
     }
 
     public function saveAction()
     {
-        $this->{objectName}Model->bind($_REQUEST);
+        $this->{objectName}Model->bind($this->Dispatcher->getParams());
         $form = new {objectName}Form($this->{objectName}Model);
         if ($form->validate())
         {    
             if ($this->{objectName}Model->save())
             {
-                $this->redirect('list', null, "Item saved successfully", CoreView::MESSAGE_TYPE_SUCCESS);
+                $this->Router->redirect('list', {objectName}, "Item saved successfully", CoreView::MESSAGE_TYPE_SUCCESS);
             }
             else
             {
-                $this->redirect('list', null, "Item could not be saved", CoreView::MESSAGE_TYPE_ERROR);
+                $this->Router->redirect('list', {objectName}, "Item could not be saved", CoreView::MESSAGE_TYPE_ERROR);
             }
         }
         else

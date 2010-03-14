@@ -1,4 +1,4 @@
-<?php 
+<?php
 /**
  * Note : Code is released under the GNU LGPL
  *
@@ -15,32 +15,37 @@
  */
 
 /**
- * File:        controllerFactory.php
+ * File:        ContainerFactory.php
  * 
  * @author      Anis BEREJEB
- * @version     0.1
+ * 
  */
 
 /**
- * Controller Factory
+ * Container Factory
  * 
  */
-class controllerFactory
+final class ContainerFactory
 {
-	/**
-	 * Returns the appropriate controller based on the controller name
-     *
-	 * 
-	 * @param  string $controllerName The controller name
-	 * @return CoreController The controller, Defaults to Maincontroller.
-	 */
-	public static function getController($controllerName)
-	{
-		$dispatcher = FrontDispatcher::getInstance();
-		if(class_exists($controllerName))
-		{
-			return new $controllerName();
-		}
-		return new MainController();
-	}
-}
+    /**
+     * Instanciates a container object
+     * 
+     * @param  string  $module The module 
+     * @return Container object
+     */
+    public function get($module = null)
+    {
+        $className = ucfirst($module) . 'Container';
+        return (class_exists($className)) ? new $className() : new Container();
+    }
+
+    /**
+     * Final private constructor
+     */
+    private function __construct(){}
+
+    /**
+     * private clone
+     */
+    private function __clone(){}
+}    

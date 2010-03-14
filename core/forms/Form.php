@@ -166,6 +166,16 @@ class Form
     {
         return $this->errors;
     }
+    
+    /**
+     * Sets a list of errors
+     * 
+     * @param  array $errors Array containing errors 
+     */
+    public function setErrors(array $errors = array())
+    {
+        $this->errors = $errors;
+    }
 
     /**
      * Returns a context Link in relation to the model.
@@ -189,9 +199,8 @@ class Form
     }
 
     /**
-     * TODO: short description.
+     * Renders the form fields
      * 
-     * @return TODO
      */
     public function render()
     {
@@ -237,12 +246,12 @@ class Form
     }
 
     /**
-     * TODO: short description.
+     * Renders a list of errors
+     *
      * 
-     * @param  mixed  $field 
-     * @return TODO
+     * @param  FormElement  $field A form element
      */
-    public function renderFieldErrors($field)
+    public function renderFieldErrors(FormElement $field)
     {
         if (isset($this->errors[$field->getName()]) && count($this->errors[$field->getName()]))
         {

@@ -243,5 +243,5 @@ abstract class FormElement
      * Abstract function 
      * Must be implemented on children to specify how to render the element.
      */
-    abstract public function render()
+    abstract public function render();
 }    

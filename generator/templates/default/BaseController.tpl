@@ -61,7 +61,7 @@ class Base{objectName}Controller extends MainController
         $this->{objectName}Model->bind($params);
         $this->{objectName}Model->checkin();
         $this->view->model = $this->{objectName}Model;
-        $this->view->form = new {objectName}Form();
+        $this->view->form = new {objectName}Form('{objectName}');
         $this->view->form->initFromModel($this->{objectName}Model);
     }
 
@@ -75,7 +75,7 @@ class Base{objectName}Controller extends MainController
         $this->{objectName}Model->bind($params);
         $this->{objectName}Model->checkin();
         $this->view->model = $this->{objectName}Model;
-        $this->view->form = new {objectName}Form();
+        $this->view->form = new {objectName}Form('{objectName}');
         $this->view->form->initFromModel($this->{objectName}Model);
         // Handle eventual errors
         $params = $this->Dispatcher->getParams();
@@ -106,7 +106,7 @@ class Base{objectName}Controller extends MainController
     public function saveAction()
     {
         $this->{objectName}Model->bind($this->Dispatcher->getParams());
-        $form = new {objectName}Form();
+        $form = new {objectName}Form('{objectName}');
         $form->initFromModel($this->{objectName}Model);
         if ($form->validate())
         {    

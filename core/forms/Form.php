@@ -11,6 +11,13 @@
 class Form
 {
     /**
+     * Form Name 
+     * 
+     * @var mixed  Defaults to null. 
+     */
+    private $name = null;
+
+    /**
      * The model represented.
      * 
      * @var CoreModel  Defaults to null. 
@@ -25,11 +32,11 @@ class Form
     protected $fields = array();
 
     /**
-     * An array of the fields keys
+     * An array of the hidden Fields
      * 
      * @var array  Defaults to array(). 
      */
-    protected $keys = array();
+    protected $hiddenFields = array();
     
 
     /**
@@ -40,14 +47,48 @@ class Form
     private $errors = array();
 
     /**
+     * Name Setter
+     * 
+     * @param  string  $name The form name
+     */
+    public function setName($name)
+    {
+        $this->name = $name;
+    } 
+    
+    /**
+     * Returns the form name.
+     * 
+     * @return string The form name
+     */
+    public function getName()
+    {
+        return $name;
+    }
+    
+    /**
+     * Constructor
+     * 
+     * @param  string  $name The form name
+     */
+    public function __construct($name)
+    {
+        $this->name = $name;
+    }    
+    
+    /**
      * Constructor, binds the model to the Form.
      * 
      * @param  coreModel  $model the model to represent
      */
     public function initFromModel(CoreModel $model)
     {
+        
         $this->model        = $model;
-        $this->keys         = $this->model->keys;
+        $modelName = explode('Model', $model->getModelName());
+        $this->setAction('/?controller=' . $modelName[0] . '&action=save');
+        $this->setName($modelName[0]);
+        $this->setHiddenFields($this->model->keys);
         $fields             = $this->model->getFields();
         $this->model->configure();
         $configuredFields   = $this->model->getTypes();
@@ -57,7 +98,7 @@ class Form
         {    
             foreach ($fields as $fieldName)
             {
-                if (!in_array($fieldName, $this->keys))
+                if (!in_array($fieldName, $this->hiddenFields))
                 {    
                     $type = isset($configuredFields[$fieldName]) ? $configuredFields[$fieldName]['type'] : 'text';
                     $element = FormElementFactory::getElement($type);
@@ -74,12 +115,47 @@ class Form
     }
 
     /**
-     * Initialises the form from an array of form elements
+     * Binds values to the elements from an array
      * 
-     * @param  array  $formElementsArray An array of form Elements
+     * @param  array $values An array of values
+     *                       should have offsets with the 
+     *                       Elements Name
      */
-    public function initFromFormElementsArray(array $formElementsArray)
+    public function bindFromArray(array $values = array())
     {
+        if (count($values))
+        {    
+            foreach ($this->getFields() as $field)
+            {
+                $fieldName = $field->getName();
+                if (array_key_exists($fieldName, $values))
+                {
+                    $field->setValue($values[$fieldName]);
+                    $this->setField($field);
+                }
+            }    
+        }
+    }
+
+    /**
+     * Sets form hidden Fields
+     * Used when a form is bound from a model so that the keys will not be shown
+     *
+     * @param array $hiddenFields array of hidden fields
+     */
+    public function setHiddenFields(array $hiddenFields)
+    {
+        $this->hiddenFields = $hiddenFields;
+    }
+
+    /**
+     * TODO: short description.
+     * 
+     * @return TODO
+     */
+    public function getHiddenFields()
+    {
+        return $this->hiddenFields;
     }    
 
     /**
@@ -160,7 +236,7 @@ class Form
                     if (!$validator->validate())
                     {
                         $this->errors[$field->getName()][] = $validator->getMessage();
-                    }    
+                    }
                 }
             }
         }
@@ -186,17 +262,26 @@ class Form
     {
         $this->errors = $errors;
     }
-
+    
     /**
-     * Returns a context Link in relation to the model.
+     * Sets the Form Action
      * 
-     * @return string the context link
+     * @param string $action the form Action
      */
-    private function getContextLink()
+    public function setAction($action)
     {
-        $modelName = explode('Model', get_class($this->model));
-        return '/?controller=' . $modelName[0];
+        $this->action = $action;
     }
+    
+    /**
+     * Returns the form Action
+     * 
+     * @return string the Form Action
+     */
+    public function getAction()
+    {
+        return $this->action;
+    }    
 
     /**
      * default field type
@@ -215,13 +300,13 @@ class Form
     public function render()
     {
         ?>
-            <form  id="form<?php echo substr($this->model->getModelName(), 0, -5);?>" method="post" action="<?php echo $this->getContextLink() . "&action=save"?>">
+            <form  id="form<?php echo $this->getName();?>" method="post" action="<?php echo $this->getAction();?>">
 
             <fieldset>
             <?php
             foreach ($this->getFields() as $field)
             {
-                if (!in_array($field->getName(), $this->keys))
+                if (!in_array($field->getName(), $this->hiddenFields))
                 {
                     ?>
                         <label>
@@ -235,9 +320,9 @@ class Form
                         <?php
                 }
             }
-        if (is_array($this->keys) && (count($this->keys) > 0))
+        if (is_array($this->hiddenFields) && (count($this->hiddenFields) > 0))
         {
-            foreach ($this->keys as $value)
+            foreach ($this->hiddenFields as $value)
             {
                 ?><input class="none" type="hidden" name="<?php echo $value?>" value="<?php echo (string)$this->model->$value ?>"><?php
             }
@@ -248,7 +333,6 @@ class Form
             <div class="button">
             <input class="none" type="hidden" name="message" value="">
             <input type="submit" value="Valider" class="submit" />
-            <input type="button" value="Retour a la liste" class="submit" onclick='document.location="<?php echo $this->getContextLink() . '&action=list'?>"' />
             </div>
             </form>
 

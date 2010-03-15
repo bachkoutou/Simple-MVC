@@ -40,7 +40,7 @@ class NotEmptyFormElementValidator extends FormElementValidator
      * 
      * @var string  Defaults to 'Element should not be empty'. 
      */
-    public $message = 'Element should be not be empty';
+    public $message = 'Element should not be empty';
 
     /**
      * Validates a not empty value

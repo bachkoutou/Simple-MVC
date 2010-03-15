@@ -95,7 +95,7 @@ class Container implements ArrayAccess
     }
 
     /**
-     * injeTODO: short description.
+     * injects the Cache Manager
      * 
      * @param  Cache  $cache 
      * @return Cache The cache object or null

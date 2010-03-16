@@ -46,7 +46,7 @@ class URLFormElementValidator extends FormElementValidator
     /**
      * Validates an url
      * 
-     * @return TODO
+     * @return Boolean true if url is valid, false otherwise
      */
     public function validate()
     {

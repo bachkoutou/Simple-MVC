@@ -1,32 +1,51 @@
 <?php
 /**
- * TODO: short description.
+ * Note : Code is released under the GNU LGPL
+ *
+ * Please do not change the header of this file 
+ *
+ * This library is free software; you can redistribute it and/or modify it under the terms of the GNU 
+ * Lesser General Public License as published by the Free Software Foundation; either version 2 of 
+ * the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; 
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. 
+ *
+ * See the GNU Lesser General Public License for more details.
+ */
+/**
+ * File:       authManager.php
  * 
- * TODO: long description.
+ * @author      Anis BEREJEB
+ * @version     0.1
+ */
+
+/**
+ * Session Manager Class
+ * 
  * 
  */
 class sessionManager
 {
     /**
-     * TODO: description.
+     * The session instance
      * 
-     * @var int  Defaults to null. 
+     * @var sessionManager Defaults to null. 
      */
     private static $_instance = null;
 
     /**
-     * TODO: description.
+     * A session Token
      * 
-     * @var mixed  Defaults to null. 
+     * @var string  Defaults to null. 
      */
     private static $token = null;
 
         
     /**
-     * TODO: short description.
+     * initialises the session
      * 
      * @param  string  $sessionId Optional, defaults to 'admin'. 
-     * @return TODO
      */
     public static function init($sessionId = 'admin')
     {
@@ -40,55 +59,52 @@ class sessionManager
     }     
 
     /**
-     * TODO: short description.
+     * Sets a value in the session
      * 
-     * @param  mixed  $property 
-     * @param  mixed  $value    
-     * @return TODO
+     * @param  mixed  $key The session Key
+     * @param  mixed  $value    The session Value
      */
-    public function set($property, $value)
+    public function set($key, $value)
     {
-        $_SESSION[self::$token][$property] = $value;
+        $_SESSION[self::$token][$key] = $value;
     }
 
     /**
-     * TODO: short description.
+     * Removes a property from the sessionTODO: short description.
      * 
-     * @param  mixed  $property 
-     * @return TODO
+     * @param  mixed  $key The key to remove
      */
-    public function remove($property)
+    public function remove($key)
     {
-        if (isset($_SESSION[self::$token][$property]))
+        if (isset($_SESSION[self::$token][$key]))
         {
-            unset($_SESSION[self::$token][$property]);
+            unset($_SESSION[self::$token][$key]);
         }
     }
 
     /**
-     * TODO: short description.
+     * Clears the session 
      * 
-     * @return TODO
      */
     public function clear()
     {
-        foreach($_SESSION[self::$token] as $key => $value)
+        if (isset($_SESSION[self::$token]))
         {
-            unset($_SESSION[self::$token][$key]);
-        }    
+            unset($_SESSION[self::$token]);
+        }
     }
     
     /**
-     * TODO: short description.
+     * Returns a value of a given key
      * 
-     * @param  mixed  $property 
-     * @return TODO
+     * @param  mixed  $key The key 
+     * @return mixed The value or false
      */
-    public function get($property)
+    public function get($key)
     {
-        if (isset($_SESSION[self::$token][$property]))
+        if (isset($_SESSION[self::$token][$key]))
         {
-            return($_SESSION[self::$token][$property]);
+            return($_SESSION[self::$token][$key]);
         }
         return false;
     }

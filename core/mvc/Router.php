@@ -175,7 +175,6 @@ class Router
      * @param  string $message     A message to add in the request, Optional, defaults to ''. 
      * @param  string $messageType A message type, Optional, defaults to 'success'. 
      * @param  array  $params      An array of additional parameters, Optional, defaults to null. 
-     * @return TODO
      */
     public function redirect($action, $controller = null, $message = '', $messageType = 'success', $params = null)
     {

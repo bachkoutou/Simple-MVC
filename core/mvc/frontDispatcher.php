@@ -76,7 +76,9 @@ class frontDispatcher
      */
     private function __construct()
     {
-        $clean = Toolbox::cleanParameters($_REQUEST);
+        // TODO : wait for PHP support for REQUEST in filter_array_input 
+        // $clean = Toolbox::cleanParameters($_REQUEST);
+        $clean = $_REQUEST;
         $this->_controller = !empty($clean['controller']) ? $clean['controller'] . 'Controller' : 'mainController';
         $this->_action = !empty($clean['action']) ? $clean['action']  : 'index';
         $this->_params = $clean;

@@ -65,10 +65,10 @@ class Toolbox
 	}	
 
     /**
-     * TODO: short description.
+     * Cleans the parameters
      * 
-     * @param  mixed    
-     * @return TODO
+     * @param  array An array of key value pairs to clean
+     * @return the clean array
      */
     public static function cleanParameters(array $params = array())
     {

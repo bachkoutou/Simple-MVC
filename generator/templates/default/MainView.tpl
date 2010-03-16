@@ -153,8 +153,6 @@ class MainView extends CoreView
 	
 	/**
 	 * Generates the main menu
-	 * TODO: generate a 
-	 * TODO: use a cache system in there because it will regenerate every time
 	 *
 	 */
 	public function renderMainMenu()

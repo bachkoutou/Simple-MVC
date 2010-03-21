@@ -71,6 +71,8 @@ class Generator
         $this->generateMainTemplate();
         $this->generateWebRoot($module);
         $this->generateConfigurationFile($module);
+        $this->generateAppIniFile();
+		$this->generateModuleIniFile($module);
 	}
 
 
@@ -477,11 +479,46 @@ class Generator
         {    
             $confTemplate = $this->getMVCTemplate('configuration');
             $confTemplate = str_replace('{moduleName}', $moduleName, $confTemplate);
+            Toolbox::saveFileWithContent($fileName, $confTemplate);
+        }    
+    } 
+
+    /**
+     * Generates the global framework file
+     * 
+     */
+    private function generateAppIniFile()
+    {
+        $baseFolder = MF_ADMIN_FOLDER . '..' . DS . "business" . DS . "conf" . DS; 
+        $fileName = $baseFolder . "apps.ini";
+        if (!file_exists($fileName))
+        {    
+            $confTemplate = $this->getMVCTemplate('AppIniFile');
+            $confTemplate = str_replace('{moduleName}', $moduleName, $confTemplate);
             $confTemplate = str_replace('{mysqlHost}', BACK_DB_HOST, $confTemplate);
             $confTemplate = str_replace('{mysqlUser}', BACK_DB_USER, $confTemplate);
             $confTemplate = str_replace('{mysqlPassword}', BACK_DB_PASSWORD, $confTemplate);
             $confTemplate = str_replace('{mysqlDatabase}', BACK_DB_DATABASE, $confTemplate);
             Toolbox::saveFileWithContent($fileName, $confTemplate);
         }    
-    }    
+    }
+
+
+    /**
+     * Generates the module config file
+     * 
+     * @param  string  $moduleName  The module name
+     */
+    private function generateModuleIniFile($moduleName)
+    {
+        $baseFolder = MF_ADMIN_FOLDER . '..' . DS . "business" . DS . $moduleName . DS . "conf" . DS; 
+        $fileName = $baseFolder . $moduleName . ".ini";
+        if (!file_exists($fileName))
+        {    
+            $confTemplate = $this->getMVCTemplate('ModuleIniFile');
+            $confTemplate = str_replace('{moduleName}', $moduleName, $confTemplate);
+            Toolbox::saveFileWithContent($fileName, $confTemplate);
+        }    
+    } 
+
 }

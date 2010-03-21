@@ -31,18 +31,21 @@ class modelFactory
      * Returns the model based on the model name
      * Model Classname should be under BUSINESS/MODEL_PATH
      * 
-     * @param  string  $modelName The model name
-     * @return mixed CoreModel on sucess and NULL otherwise
+     * @param  string  $modelName       The model name
+     * @param  PDODatabase $database    The database instance
+     * @param array $configuration  a configuration array Defaults to array
+     * @return CoreModel The model on sucess and NULL otherwise
      */
-    public static function getModel($modelName)
+    public static function getModel($modelName, PDODatabase $database, array $configuration = array())
     {
-       	$modelFile = BUSINESS . DS . MODELS_PATH . DS . $modelName . '.php';
+
+        $modelFile = BUSINESS . DS . MODELS_PATH . DS . $modelName . '.php';
         if (file_exists($modelFile))
         {            
             require_once($modelFile);
             if(class_exists($modelName))
             {
-                return new $modelName();
+                return new $modelName($database, $configuration);
             }
         }
         return null;

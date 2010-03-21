@@ -43,7 +43,7 @@ class Base{objectName}Controller extends MainController
      */
     public function listAction($where = null, $orderBy = null, $offset = 0, $limit = 0)
     {
-        $this->{objectName}Model->setItemsPerPage(CONTROLLER_LIST_DEFAULT_NUMBER);
+        $this->{objectName}Model->setItemsPerPage($this->configuration['list_default_number']);
         $this->view->model = $this->{objectName}Model;
         $this->view->where = $where;
         $this->view->orderBy = $orderBy;

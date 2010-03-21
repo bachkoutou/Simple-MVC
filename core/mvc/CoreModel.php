@@ -44,7 +44,7 @@ class CoreModel extends ArrayIterator
     /**
 	 * database instance
 	 * 
-	 * @var Database  Defaults to null. 
+	 * @var PDODatabase  Defaults to null. 
 	 */
 	protected $database = null;
 
@@ -127,14 +127,24 @@ class CoreModel extends ArrayIterator
      * @var string
      */
     private $orderBy;
+    
+    /**
+     * The configuration array
+     * 
+     * @var array  Defaults to array(). 
+     */
+    protected $configuration = array();
 
     /**
      * Constructor
      * 
+     * @param  PDODatabase  $database      The database instance
+     * @param  array        $configuration The configuration params Default to array
      */
-    public function __construct()
+    public function __construct(PDODatabase $database, array $configuration = array())
     {
-        $this->database =  database::getInstance();
+        $this->database = $database;
+        $this->configuration = $configuration;
         $this->setModelName();
 
         if (!$this->_tableName)

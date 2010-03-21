@@ -29,6 +29,11 @@
 class Container implements ArrayAccess
 {
     /**
+     * a static config variable to handle configuration
+     */
+    private static $config = null;
+
+    /**
      * Objects container
      * 
      * @var array  Defaults to array(). 
@@ -97,13 +102,51 @@ class Container implements ArrayAccess
     /**
      * injects the Cache Manager
      * 
-     * @param  Cache  $cache 
      * @return Cache The cache object or null
      */
     public function setCacheManager()
     {
-        $cache = CacheFactory::get(DEFAULT_CACHE_TYPE);
-        $cache->setPrefix(DEFAULT_CACHE_PREFIX);
+        $config = $this->loadConfig();
+        $cache = CacheFactory::get($config['cache']['type']);
+        $cache->setPrefix($config['cache']['prefix']);
         return $cache;
     }
+    
+    /**
+     * Instanciates the configuration once
+     * To avoid using Singletons. Checks if the static property $config
+     * exits before re-instanciating config.
+     * 
+     * @return ConfigurationManager the config
+     */
+    private function loadConfig()
+    {
+        if (isset(self::$config))
+        {
+            return self::$config;
+        }
+        else
+        {
+            $config =  new ConfigurationManager(
+                array(
+                    CORE . '../business/conf/apps.ini', 
+                    BUSINESS . 'conf/admin.ini'),
+                new ConfigurationParser()    
+            );
+            $config->merge();
+            self::$config = $config;
+            return $config;
+        }
+    }
+    /**
+     * Injects the Configuration object 
+     * Loads Ini files
+     * 
+     * @return 
+     */
+    public function setConfig()
+    {
+        return $this->loadConfig();
+    }
+
 }

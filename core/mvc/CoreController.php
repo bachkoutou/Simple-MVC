@@ -70,6 +70,43 @@ class CoreController implements IController
      */
 	protected $_useModels = array();
 	
+    /**
+     * Controller Configuration
+     * 
+     * @var array  Defaults to array(). 
+     */
+    protected $configuration = array();
+
+    /**
+     * Constructor
+     * 
+     * @param  array $configuration a configuration array Defaults to null  
+     */
+    public function __construct(array $configuration = array())
+    {
+        $this->configuration = $configuration;
+    }
+
+    /**
+     * Configuration Setter
+     * 
+     * @param  array  $configuration The configuration array
+     */
+    public function setConfiguration(array $configuration)
+    {
+        $this->configuration = $configuration;
+    }
+
+    /**
+     * Configuration Getter
+     * 
+     * @return array The configuration array
+     */
+    public function getConfiguration()
+    {
+        return $this->configuration;
+    }    
+
 	/**
      * always function, to be executed every time
      *
@@ -90,9 +127,10 @@ class CoreController implements IController
      */
     public function setContainer(Container $container)
     {
-        $this->Router = $container['Router'];
-        $this->Dispatcher = $container['Dispatcher'];
-        $this->CacheManager = $container['CacheManager'];
+        $this->Router           = $container['Router'];
+        $this->Dispatcher       = $container['Dispatcher'];
+        $this->CacheManager     = $container['CacheManager'];
+        $this->Config    = $container['Config'];
     } 
 
 	/**

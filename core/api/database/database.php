@@ -49,25 +49,21 @@ class database
      * 
      * @param  string  $type The database type, Optional, defaults to null. 
      *                       Allows specifying a db default type
+     * 
+     * @param  string  $DB_HOST     The Host
+     * @param  string  $DB_DATABASE The Database
+     * @param  string  $DB_USER     The User
+     * @param  string  $DB_PASSWORD The password
+     * @param  string  $DB_TYPE     The database type, all what is supported by PDO, Optional, defaults to 'mysql'. 
      * @return PDO object
      */
-    public static function getInstance($type = null)
+    public static function getInstance($DB_HOST, $DB_DATABASE, $DB_USER, $DB_PASSWORD, $DB_TYPE = 'mysql')
     {
-        if (!DB_TYPE)
+        if (!isset(self::$instances[$DB_TYPE]))
         {
-            throw new Exception('constant DB TYPE not Defined');
+           self::$instances[$DB_TYPE] = new PDODatabase($DB_HOST, $DB_DATABASE, $DB_USER, $DB_PASSWORD, $DB_TYPE);
         }
-
-        if (!$type)
-        {
-            $type = DB_TYPE;
-        }
-
-        if (!isset(self::$instances[DB_TYPE]))
-        {
-           self::$instances[DB_TYPE] = new PDODatabase(DB_HOST, DB_DATABASE, DB_USER, DB_PASSWORD, DB_TYPE);
-        }
-        return self::$instances[DB_TYPE];
+        return self::$instances[$DB_TYPE];
     }
 
     /**
@@ -77,6 +73,5 @@ class database
     private final function __clone()
     {
     }
-
 }
 

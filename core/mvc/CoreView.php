@@ -114,11 +114,11 @@ class CoreView extends ArrayObject
 	
 	/**
 	 * Indicates if The view should auto render The templates or not
-     * Uses The AUTO_RENDER_TEMPLATE constant as defaut.
+     * Uses The auto_render_template param in the ini file .
 	 * 
-	 * @var boolean  Defaults to AUTO_RENDER_TEMPLATE. 
+	 * @var boolean  Defaults to null
 	 */
-	public  $renderTemplate = AUTO_RENDER_TEMPLATE;
+	public  $renderTemplate = null;
 
 
 	/**
@@ -128,26 +128,52 @@ class CoreView extends ArrayObject
 	 */
 	private $_tplFile = null;
 
+    /**
+     * The configuration array
+     *
+     * @var array  Defaults to array(). 
+     */
+    protected $configuration = array();
 	/**
 	 * Constructor
 	 * 
 	 * @param  string $controller The controller name
 	 */
-	public function __construct()
+	public function __construct($viewName, array $configuration = array())
 	{
 		parent::__construct(array(), ArrayObject::ARRAY_AS_PROPS);
-	}
+        $this->viewName = $viewName;
+        $this->configuration = $configuration;
 
+        $this->renderTemplate = isset($configuration['autorender_template']) ? (bool) $configuration['autorender_template'] : 1;
+	}
+    
+    /**
+     * Configuration Setter
+     * 
+     * @param  array  $configuration the configuration array
+     */
+    public function setConfiguration(array $configuration)
+    {
+        $this->configuration = $configuration;
+    } 
+
+    /**
+     * Configuration Getter
+     * 
+     * @return array the configuration array
+     */
+    public function getConfiguration()
+    {
+        return $this->configuration;
+    }    
 	/**
 	 * Renders The Template
 	 * 
 	 */
 	public function renderTemplate()
 	{
-		if (file_exists(BUSINESS. DS . TEMPLATES_PATH  . $this->getTemplate()))
-        {    
-		    include(BUSINESS . DS . TEMPLATES_PATH . $this->getTemplate());
-        }    
+		include(BUSINESS . DS . TEMPLATES_PATH . $this->getTemplate());
 	}
 
 	/**
@@ -461,25 +487,16 @@ class CoreView extends ArrayObject
 	public function autoIncludeJs()
 	{
 		// include files in The styles/{module} file
-		$file = 'scripts/' . $this->getModule() . '.js';
-		if (file_exists(WEB . $file))
-		{
-			$this->addCss('/' . $file);
-		}
+		$file = '/scripts/' . $this->getModule() . '.js';
+	    $this->addCss($file);
 
 		// include file in The styles/{modules}/{controller}.css file
-		$file = 'scripts/' . $this->getModule() . '/' . $this->getController() . '.js';
-		if (file_exists(WEB . $file))
-		{
-			$this->addJs('/' . $file);
-		}
+		$file = '/scripts/' . $this->getModule() . '/' . $this->getController() . '.js';
+		$this->addJs($file);
 
 		// include files in The styles/{module}/{controller}/{action} file
-		$file = 'scripts/' . $this->getModule() . '/' . $this->getController() . '/' . $this->getViewName() . '.js';
-		if (file_exists(WEB . $file))
-		{
-			$this->addJs('/' . $file);
-		}
+		$file = '/scripts/' . $this->getModule() . '/' . $this->getController() . '/' . $this->getViewName() . '.js';
+		$this->addJs($file);
 	}
 
 	/**
@@ -490,24 +507,15 @@ class CoreView extends ArrayObject
 	{
 		// include files in The styles/{module} file
 		$file = 'styles/' . $this->getModule() . '.css';
-		if (file_exists(WEB . $file))
-		{
-			$this->addCss('/' . $file);
-		}
+        $this->addCss('/' . $file);
 
 		// include file in The styles/{modules}/{controller}.css file
 		$file = 'styles/' . $this->getModule() . '/' . $this->getController() . '.css';
-		if (file_exists(WEB . $file))
-		{
-			$this->addCss('/' . $file);
-		}
+        $this->addCss('/' . $file);
 
 		// include files in The styles/{module}/{controller}/{action} file
 		$file = 'styles/' . $this->getModule() . '/' . $this->getController() . '/' . $this->getViewName() . '.css';
-		if (file_exists(WEB . $file))
-		{
-			$this->addCss('/' . $file);
-		}
+        $this->addCss('/' . $file);
 	}
 
 

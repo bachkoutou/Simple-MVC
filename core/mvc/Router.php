@@ -85,25 +85,33 @@ class Router
      */
     public function route(Container $container)
     {    
+        $controllerConfig = isset($container['Config']['controller']) ? $container['Config']['controller'] : array();
+        $modelConfig = isset($container['Config']['model']) ? $container['Config']['model'] : array();
+        $viewConfig = isset($container['Config']['view']) ? $container['Config']['view'] : array();
         // get the controller Object
-        $controller = controllerFactory::getController($this->_controller);
+        $controller = controllerFactory::getController($this->_controller, $controllerConfig);
         // inject any dependencies to the controller
         $container['Router'] = $this;
         $controller->setContainer($container);
-        
         $controller->setActionName($this->_action);
         $usedModels = $controller->getUsedModels();
-        
+        $database =  database::getInstance(
+                        $container['Config']['database']['host'],
+                        $container['Config']['database']['database'],
+                        $container['Config']['database']['user'],
+                        $container['Config']['database']['password'],
+                        $container['Config']['database']['type']
+                        ); 
         if (0 < count($usedModels))
         {
             foreach ($usedModels as $model)
             {
                 $modelName = $model . 'Model';
-                $controller->setModel(modelFactory::getModel($modelName));
+                $controller->setModel(modelFactory::getModel($modelName, $database, $modelConfig));
             }
 
         }
-        $view = viewFactory::getView($this->_controller);
+        $view = viewFactory::getView($this->_controller, $viewConfig);
         $view->setController($this->_controller);
         $view->setViewName($this->_action);
         $view->setExtension('.php');

@@ -34,13 +34,13 @@ class controllerFactory
 	 * @param  string $controllerName The controller name
 	 * @return CoreController The controller, Defaults to Maincontroller.
 	 */
-	public static function getController($controllerName)
+	public static function getController($controllerName, array $configuration = array())
 	{
 		$dispatcher = FrontDispatcher::getInstance();
 		if(class_exists($controllerName))
 		{
-			return new $controllerName();
+			return new $controllerName($configuration);
 		}
-		return new MainController();
+		return new MainController($configuration);
 	}
 }

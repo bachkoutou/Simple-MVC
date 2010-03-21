@@ -761,4 +761,69 @@ class CoreModel extends ArrayIterator
         return $this->types;
     }    
 
+    /**
+     * Finds instances by property
+     * 
+     * @param  string  $property The property Name
+     * @param  string  $value    The property value
+     * @return PDO  A ressource that you can loop with to fetch the result
+     */
+    public function findByProperty($property, $value)
+    {
+        $property = strtolower($property);
+        if (property_exists($this->getModelName(), $property))
+        {
+            $query =  "SELECT * FROM " . $this->getTableName() . " WHERE $property='$value'";
+            return $this->database->query($query, PDO::FETCH_CLASS, get_class($this));
+        }
+    }
+    
+    /**
+     * Finds instances with a like pattern applied to a property
+     * 
+     * @param  string  $property The property Name
+     * @param  string  $value    The property value a SQL92 Like (using the % at the 
+     *                           Begining or the end of the value )
+     * @return PDO  A ressource that you can loop with to fetch the result
+     */
+    public function findLikeProperty($property, $value)
+    {
+        $property = strtolower($property);
+        if (property_exists($this->getModelName(), $property))
+        {
+            $query =  "SELECT * FROM " . $this->getTableName() . " WHERE $property LIKE '$value'";
+            return $this->database->query($query, PDO::FETCH_CLASS, get_class($this));
+        }
+    }
+
+    /**
+     * Magic method Call
+     * Handles any method calls using 
+     * findBy<Property> to find by property
+     * findLike<Property> to find with like
+     *
+     * @param  string $function The function called 
+     * @param  array  $arguments An array of the function arguments
+     */
+    public function __call($function, $arguments)
+    {
+        if (preg_match('/^findBy(.*)/', $function, $properties))
+        {
+            if (!isset($arguments[0]) || '' === $arguments[0])
+            {
+                throw new InvalidArgumentException('Value not set or empty');
+            }
+            return $this->findByProperty($properties[1], $arguments[0]);
+        }
+        if (preg_match('/^findLike(.*)/', $function, $properties))
+        {
+            if (!isset($arguments[0]) || '' === $arguments[0])
+            {
+                throw new InvalidArgumentException('Value not set or empty');
+            }
+            return $this->findLikeProperty($properties[1], $arguments[0]);
+        }
+    }
+
+
 }

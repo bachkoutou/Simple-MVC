@@ -29,6 +29,13 @@
 class Container implements ArrayAccess
 {
     /**
+     * The module name
+     * 
+     * @var string  Defaults to null. 
+     */
+    private $module = null;
+
+    /**
      * a static config variable to handle configuration
      */
     private static $config = null;
@@ -39,6 +46,16 @@ class Container implements ArrayAccess
      * @var array  Defaults to array(). 
      */
     private $_container = array();
+    
+    /**
+     * Constructor
+     * 
+     * @param  mixed  $moduleName 
+     */
+    public function __construct($moduleName)
+    {
+        $this->module = $moduleName;
+    }    
 
     /**
      * determines if an offset exists
@@ -130,8 +147,8 @@ class Container implements ArrayAccess
             $config =  new ConfigurationManager(
                 array(
                     CORE . '../business/conf/apps.ini', 
-                    BUSINESS . 'conf/admin.ini'),
-                new ConfigurationParser()    
+                    BUSINESS . 'conf/' . $this->module . '.ini'),
+                new INIConfigurationParser()    
             );
             $config->merge();
             self::$config = $config;

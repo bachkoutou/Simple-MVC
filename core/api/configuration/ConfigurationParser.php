@@ -26,21 +26,28 @@
  * The configuration classes will handle all the configuration stuff for the framework. 
  * Configurations can be updated by application, or module using the naming rule.
  */
-class ConfigurationParser implements ArrayAccess
+abstract class ConfigurationParser implements ArrayAccess
 {
+    /**
+     * Cache container
+     * 
+     * @var mixed  Defaults to array(). 
+     */
+    protected static $cache = array();
+
     /**
      * Configuration Container
      * 
      * @var array  Defaults to null. 
      */
-    private $settings = null;
+    protected $settings = null;
 
     /**
      * Full path to the ini config file
      * 
      * @var string  Defaults to null. 
      */
-    private $file = null;
+    protected $file = null;
 
     /**
      * Loads a file into a string
@@ -51,22 +58,15 @@ class ConfigurationParser implements ArrayAccess
     {
           if (!file_exists($file))
           {
-              throw new Exception($file . ' does not exist');
+              throw new Exception ('File ' . $file . ' Does not exist');
           }
           $this->file = $file;
     }
     
     /**
-     * Parses the file TODO: short description.
-     * 
-     * 
-     * @param  bool  $enableSections true if sections should be enabled, 
-     *                      false otherwise, Optional, defaults to true. 
+     * Parses the file, should be implemented in sub classes
      */
-    public function parse($enableSections = true)
-    {
-        $this->settings =  parse_ini_file($this->file, $enableSections);
-    }
+    abstract public function parse();
 
     /**
      * Gets a value of a given offset

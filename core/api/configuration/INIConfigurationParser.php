@@ -15,37 +15,25 @@
  */
 
 /**
- * File:        ContainerFactory.php
+ * File:        INIConfigurationParser.php
  * 
  * @author      Anis BEREJEB
  * 
  */
 
 /**
- * Container Factory
- * 
+ * Defines an ini configuration parser
  */
-final class ContainerFactory
+class INIConfigurationParser extends ConfigurationParser
 {
     /**
-     * Instanciates a container object
+     * Parses the file 
      * 
-     * @param  string  $module The module 
-     * @return Container object
+     * @param  bool  $enableSections true if sections should be enabled, 
+     *                      false otherwise, Optional, defaults to true. 
      */
-    public function get($module = null)
+    public function parse($enableSections = true)
     {
-        $className = ucfirst($module) . 'Container';
-        return (class_exists($className)) ? new $className($module) : new Container($module);
+        $this->settings =  parse_ini_file($this->file, $enableSections);
     }
-
-    /**
-     * Final private constructor
-     */
-    private function __construct(){}
-
-    /**
-     * private clone
-     */
-    private function __clone(){}
-}    
+}

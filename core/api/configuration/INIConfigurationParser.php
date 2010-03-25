@@ -34,6 +34,45 @@ class INIConfigurationParser extends ConfigurationParser
      */
     public function parse($enableSections = true)
     {
-        $this->settings =  parse_ini_file($this->file, $enableSections);
+        $this->settings =  $this->buildArrayWithMultiNodes(parse_ini_file($this->file, $enableSections));
+    }
+
+    /**
+     * Builds an array with multi nodes
+     * Accepts values like 
+     *
+     * [section]
+     * var.variable = value
+     * var.subvar.subvar2 = value2
+     * var2.subvar2.subsubvar2 = value3
+     *
+     * @param  array  $config The config array (from parse_ini_file())
+     * @return array The multi level array
+     */
+    private function buildArrayWithMultiNodes(array $config)
+    {
+        $returnConfig = array();
+
+        foreach($config as $key => $value)
+        {
+            $elements = explode('.', $key);
+            $tempArray = &$returnConfig;
+
+            $counter = count($elements);
+            for ($i = 0 ; $i < $counter - 1 ; $i++)
+            {
+                if (!isset($tempArray[$elements[$i]]))
+                {
+                    $tempArray[$elements[$i]] = array();
+                }
+
+                $tempArray = &$tempArray[$elements[$i]];
+            }
+
+            $tempArray[$elements[$counter - 1]] = is_array($value) ?
+                $this->buildArrayWithMultiNodes($value) : $value;
+        }
+
+        return $returnConfig;
     }
 }

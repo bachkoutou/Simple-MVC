@@ -42,7 +42,12 @@ class PDODatabase extends PDO
     {
         try 
         {
-            parent::__construct("$dbType:host=$host;dbname=$dbname", $user, $pass);
+            parent::__construct(
+                "$dbType:host=$host;dbname=$dbname", 
+                $user, 
+                $pass,
+                array(PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8")
+                );
 
         } 
         catch (PDOException $e) 

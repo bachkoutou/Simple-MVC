@@ -770,5 +770,90 @@ class CoreModel extends ArrayIterator
     {
         return $this->types;
     }    
+    /************************************** SEARCH OPTIONS **************************/
+    /**
+     * Finds instances by property
+     * 
+     * @param  string  $property The property Name
+     * @param  string  $value    The property value
+     * @return PDO  A ressource that you can loop with to fetch the result
+     */
+    public function findByProperty($property, $value)
+    {
+        $property = strtolower($property);
+        if (!property_exists($this->getModelName(), $property))
+        {
+            throw new CoreModelException('Property ' . $property . ' Not found');
+        }    
+        $query =  "SELECT * FROM " . $this->getTableName() . " WHERE $property='$value'";
+        return $this->database->query($query, PDO::FETCH_CLASS, get_class($this));
+    }
+    
+    /**
+     * Finds instances with a like pattern applied to a property
+     * 
+     * @param  string  $property The property Name
+     * @param  string  $value    The property value a SQL92 Like (using the % at the 
+     *                           Begining or the end of the value )
+     * @return PDO  A ressource that you can loop with to fetch the result
+     */
+    public function findLikeProperty($property, $value)
+    {
+        $property = strtolower($property);
+        if (!property_exists($this->getModelName(), $property))
+        {
+            throw new CoreModelException('Property ' . $property . ' Not found');
+        }    
+        $query =  "SELECT * FROM " . $this->getTableName() . " WHERE $property LIKE '$value'";
+        return $this->database->query($query, PDO::FETCH_CLASS, get_class($this));
+    }
 
+    /**
+     * Finds for objets using a where clause
+     * 
+     * @param  string  $where 
+     * @return PDO A PDO ressource that can be looped on to fetch the result
+     */
+    public function findWhere($where)
+    {
+        $query =  "SELECT * FROM " . $this->getTableName() . " WHERE $where";
+        return $this->database->query($query, PDO::FETCH_CLASS, get_class($this));
+    }
+
+    /**
+     * Magic method Call
+     * Handles any method calls using 
+     * findBy<Property> to find by property
+     * findLike<Property> to find with like
+     *
+     * @param  string $function The function called 
+     * @param  array  $arguments An array of the function arguments
+     */
+    public function __call($function, $arguments)
+    {
+        if ('findWhere' === $function)
+        {
+            if (!isset($arguments[0]) || '' === $arguments[0])
+            {
+                throw new InvalidArgumentException('Value not set or empty');
+            }
+            return $this->findWhere($arguments[0]);
+        }
+        elseif (preg_match('/^findBy(.*)/', $function, $properties))
+        {
+            if (!isset($arguments[0]) || '' === $arguments[0])
+            {
+                throw new InvalidArgumentException('Value not set or empty');
+            }
+            return $this->findByProperty($properties[1], $arguments[0]);
+        }
+        elseif (preg_match('/^findLike(.*)/', $function, $properties))
+        {
+            if (!isset($arguments[0]) || '' === $arguments[0])
+            {
+                throw new InvalidArgumentException('Value not set or empty');
+            }
+            return $this->findLikeProperty($properties[1], $arguments[0]);
+        }
+    }
 }

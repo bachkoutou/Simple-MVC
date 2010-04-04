@@ -1,27 +1,40 @@
 <?php
-/******* DB SETTINGS **********/
-define('FRONT_DB_HOST', 'localhost');
-define('FRONT_DB_USER', '*****');
-define('FRONT_DB_PASSWORD', '*****');
-define('FRONT_DB_DATABASE', '****');
+/**
+ * Note : Code is released under the GNU LGPL
+ *
+ * Please do not change the header of this file 
+ *
+ * This library is free software; you can redistribute it and/or modify it under the terms of the GNU 
+ * Lesser General Public License as published by the Free Software Foundation; either version 2 of 
+ * the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; 
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. 
+ *
+ * See the GNU Lesser General Public License for more details.
+ */
 
-
+/**
+ * File:        configuration_{moduleName}.php
+ * 
+ * @author      Anis BEREJEB
+ * @version     0.1
+ */
+/**
+ * Configuration file 
+ */
 
 /******* PATH SETTINGS **********/
  define('DS', DIRECTORY_SEPARATOR);
- define('FRONT_ABSP', dirname(__FILE__)  . DS . '..' . DS);
- define('FRONT_CORE', FRONT_ABSP . 'core' . DS);
- define('FRONT_BUSINESS', FRONT_ABSP . 'business' . DS);
- define('FRONT_CONTROLLERS_PATH', 'controllers' . DS);
- define('FRONT_LIBRARIES_PATH', 'libraries' . DS);
- define('FRONT_MODELS_PATH', 'models' . DS);
- define('FRONT_VIEWS_PATH', 'views' . DS);
- define('FRONT_TEMPLATES_PATH', 'templates' . DS);
- define('FRONT_DESCRIPTORS_PATH', 'descriptors' . DS);
- 
- define('FRONT_WEB',FRONT_ABSP . 'document_root' . DS);
- define('AUTO_RENDER_TEMPLATE', true);
-define('FRONT_URL','http://www.yourserver.com/');
- define('AUTOLOAD_SAVE_PATH', '/tmp/')
-
+ define('ABSP', dirname(__FILE__)  . DS . '..' . DS);
+ define('CORE', ABSP . 'core' . DS);
+ define('MODULE', '{moduleName}' . DS);
+ define('BUSINESS', ABSP . 'business' . DS . MODULE);
+ define('CONTROLLERS_PATH', 'controllers' . DS);
+ define('LIBRARIES_PATH', 'libraries' . DS);
+ define('MODELS_PATH', 'models' . DS);
+ define('VIEWS_PATH', 'views' . DS);
+ define('TEMPLATES_PATH', 'templates' . DS);
+ define('DESCRIPTORS_PATH', 'descriptors' . DS);
+ define('AUTOLOAD_SAVE_PATH', '/tmp');
 

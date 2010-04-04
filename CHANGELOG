@@ -1,5 +1,34 @@
 CHANGELOG :
+==========================================
+April 04 2010
+==========================================
+
+Bugs / issues 
+==========================================
+added static keyword for factories.
+Replaced loading module using core path by business path
+Fixed issue with the IntFormElementValidator validator.
+Fixed some issues with the CoreModel
+Fixed issue when getting the view name in the Router
+
+=========================================
+Features :
+=========================================
+Added Search Api And implemented a Solr Search
+Added Configuration manager with Multi level Configuration support
+
+Added debugConsole and switch error handler to use Exceptions.
+
+Added files support in the frontDispatcher. 
+added FileFormElement and FileFormElementValidator
+added method, enctype support and changed constructor to accept formName, formAction, formMethod and form Enctype.
+
+added HiddenFormElement element
+added label support for forms
+
+========================================
 - to implement :
-  - configuration manager
+========================================
   - session manager
   - authentication manager  
+  - Captcha Form element

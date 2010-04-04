@@ -56,7 +56,6 @@ class Base{objectName}Controller extends MainController
      */
     public function detailAction()
     {
-        $fields = $this->{objectName}Model->getPublicProperties();
         $params = $this->Dispatcher->getParams();
         $this->{objectName}Model->bind($params);
         $this->{objectName}Model->checkin();
@@ -70,7 +69,6 @@ class Base{objectName}Controller extends MainController
      */
     public function editAction()
     {
-        $fields = $this->{objectName}Model->getPublicProperties();
         $params = $this->Dispatcher->getParams();
         $this->{objectName}Model->bind($params);
         $this->{objectName}Model->checkin();

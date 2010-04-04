@@ -37,7 +37,6 @@ class viewFactory
     public static function getview($viewName, array $configuration = array())
     {
     	$viewFile = BUSINESS . DS . VIEWS_PATH . $viewName . '.php';
-
 		$viewNameView = ucfirst($viewName) . 'View';
         if (file_exists($viewFile))
         {           

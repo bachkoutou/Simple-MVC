@@ -1,4 +1,4 @@
-<?php
+<?php 
 /**
  * Note : Code is released under the GNU LGPL
  *
@@ -15,37 +15,27 @@
  */
 
 /**
- * File:        CacheFactory.php
+ * File:        ISearcher.php
  * 
  * @author      Anis BEREJEB
- * 
+ * @version     0.1
  */
 
 /**
- * Cache Factory
+ * ISearcher Interface
+ * Fixes the contract for all search plugins
  * 
  */
-final class CacheFactory
+interface ISearcher
 {
     /**
-     * Instanciates a cache object
+     * does the search
+     * should be implemented in the ISearcher 
      * 
-     * @param  string  $cacheType The Cache Type
-     * @return Cache object
+     * @param  string  $query   The search query
+     * @param  int     $offset  The offset
+     * @param  int     $limit   The limit
+     * @return mixed   The search results   
      */
-    public static function get($cacheType = null)
-    {
-        $className = $cacheType . 'Cache';
-        return (class_exists($className)) ? new $className() : new ArrayCache();
-    }
-
-    /**
-     * Final private constructor
-     */
-    private function __construct(){}
-
-    /**
-     * private clone
-     */
-    private function __clone(){}
+     public function search($query,$offset,$limit);
 }    

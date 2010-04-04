@@ -49,7 +49,8 @@ class IntFormElementValidator extends FormElementValidator
      */
     public function validate()
     {
-        return (filter_var($this->element->getValue(), FILTER_VALIDATE_INT)) ? true : false;
+
+        return (0 == $this->element->getValue() || filter_var($this->element->getValue(), FILTER_VALIDATE_INT)) ? true : false;
     }    
 }
             

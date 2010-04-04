@@ -111,7 +111,8 @@ class Router
             }
 
         }
-        $view = viewFactory::getView($this->_controller, $viewConfig);
+        $viewName = substr($this->_controller,0, -10);
+        $view = viewFactory::getView($viewName, $viewConfig);
         $view->setController($this->_controller);
         $view->setViewName($this->_action);
         $view->setExtension('.php');

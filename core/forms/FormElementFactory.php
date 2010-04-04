@@ -42,7 +42,7 @@ class FormElementFactory
      * @param  string  $type 
      * @return FormElement The element to return, Defaults to TextFormElement.
      */
-    public function getElement($type)
+    public static function getElement($type)
     {
         $classname = ucfirst($type) . 'FormElement';
         return  (class_exists($classname)) ? new $classname() : new TextFormElement();

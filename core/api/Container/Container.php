@@ -146,7 +146,7 @@ class Container implements ArrayAccess
         {
             $config =  new ConfigurationManager(
                 array(
-                    CORE . '../business/conf/apps.ini', 
+                    BUSINESS . '../conf/apps.ini', 
                     BUSINESS . 'conf/' . $this->module . '.ini'),
                 new INIConfigurationParser()    
             );

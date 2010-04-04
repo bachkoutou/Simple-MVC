@@ -35,6 +35,6 @@ class TextFormElement extends FormElement
      */
     public function render()
     {
-        echo '<input name="' . $this->getName() . '" type="' . $this->getType() . '" value="' . $this->getValue() . '" ' . $this->getAttributesString() . '/>';
+        echo '<input name="' . $this->getName() . '" type="text" value="' . $this->getValue() . '" ' . $this->getAttributesString() . '/>';
     }    
 }    

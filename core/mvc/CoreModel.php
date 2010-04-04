@@ -170,8 +170,8 @@ class CoreModel extends ArrayIterator
      */
     public function getPublicProperties($noCache = false)
     {
-        if (!isset($this->cache['publicProperties']) || !count($this->cache['publicProperties']) || true === $noCache)
-        {
+        //if (!isset($this->cache['publicProperties']) || !count($this->cache['publicProperties']) || true === $noCache)
+        //{
             $reflexionObject = new ReflectionClass(get_class($this));
 
             $publicProperties = array();
@@ -183,9 +183,10 @@ class CoreModel extends ArrayIterator
                     $publicProperties[$property->name] = $this->{$property->name};
                 }
             }
-            $this->cache['publicProperties'] = $publicProperties;
-        }
-        return $this->cache['publicProperties'];
+            return $publicProperties;
+           // $this->cache['publicProperties'] = $publicProperties;
+        //}
+        //return $this->cache['publicProperties'];
     }
 
     /**
@@ -299,7 +300,7 @@ class CoreModel extends ArrayIterator
         else
         {
             $publicProperties = array();
-            foreach ($this->publicProperties as $property => $value)
+            foreach ($this->getPublicProperties(true) as $property => $value)
             {
                 $publicProperties[$property] = $this->$property;
             }
@@ -463,10 +464,10 @@ class CoreModel extends ArrayIterator
      */
     public function beginEnum($where = null, $orderBy = null, $offset = 0, $limit = 0)
     {
-        $where = ($this->where) ? $this->where : $where;
-        $orderBy = ($this->orderBy) ? $this->orderBy : $orderBy;
-        $offset = ($this->offset) ? $this->offset : $offset;
-        $limit = ($this->itemsPerPage) ? $this->itemsPerPage : $limit;
+        $where = isset($this->where) ? $this->where : $where;
+        $orderBy = isset($this->orderBy) ? $this->orderBy : $orderBy;
+        $offset = isset($this->offset) ? $this->offset : $offset;
+        $limit = isset($this->itemsPerPage) ? $this->itemsPerPage : $limit;
         $this->endEnum();
 
         if ($where == null || (strcmp($where, $this->query) != 0))
@@ -609,6 +610,8 @@ class CoreModel extends ArrayIterator
         $controllerName = substr($dispatcher->getController(), 0,-10 ) ;
         if (!empty($this->itemsPerPage))
         {    
+            $this->pagination = new stdClass;
+            $this->pagination->links = array();
             $this->pagination->pages = ceil($this->totalCount / $this->itemsPerPage);
             $offset = 0;
             for ($i = 0; $i < $this->pagination->pages; $i++)
@@ -654,8 +657,9 @@ class CoreModel extends ArrayIterator
      */
     public function renderPagination($offset = 0)
     {
+
         $pagination = $this->getPagination();
-        if (is_array($pagination->links))
+        if (is_array($pagination->links) && count($pagination->links))
         {    
             // render total 
             $string = 'Total pages (' . $pagination->pages . ') :  ' ;

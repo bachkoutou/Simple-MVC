@@ -50,6 +50,14 @@ class frontDispatcher
     protected $_params;
 
     /**
+     * files array (will be mapped
+     * from files) Defaults to array
+     * 
+     * @var array 
+     */
+    protected $files = array();
+
+    /**
      * the dispatcher instance
      * 
      * @var frontDispatcher
@@ -82,6 +90,12 @@ class frontDispatcher
         $this->_controller = !empty($clean['controller']) ? $clean['controller'] . 'Controller' : 'mainController';
         $this->_action = !empty($clean['action']) ? $clean['action']  : 'index';
         $this->_params = $clean;
+        
+        // get any files
+        if (isset($_FILES) && count($_FILES))
+        {
+            $this->setFiles($_FILES);
+        }
         $this->router  = new Router();
         $this->router->setController($this->_controller);
         $this->router->setAction($this->_action);
@@ -108,6 +122,28 @@ class frontDispatcher
     {
         return $this->_params;
     }
+
+    /**
+     * Files Setter
+     * 
+     * @param  array  $files array of files
+     * should have the same structure as $_FILES
+     */
+    public function setFiles(array $files)
+    {
+        $this->files = $files;
+    }
+
+    /**
+     * Files Getter
+     * 
+     * @return array a list of files
+     */
+    public function getFiles()
+    {
+        return $this->files;
+    }
+
 
     /**
      * Controller Getter

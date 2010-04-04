@@ -33,6 +33,27 @@
 class Form
 {
     /**
+     * The form action
+     * 
+     * @var string
+     */
+    private $action;
+
+    /**
+     * The form method
+     * 
+     * @var string Defaults to 'post'.
+     */
+    private $method = 'post';
+
+    /**
+     * Form encType
+     * 
+     * @var string  Defaults to 'application/x-www-form-urlencoded'. 
+     */
+    private $encType = 'application/x-www-form-urlencoded';
+
+    /**
      * Form Name 
      * 
      * @var mixed  Defaults to null. 
@@ -69,6 +90,81 @@ class Form
     private $errors = array();
 
     /**
+     * Renders The Validators hints
+     * 
+     * @var bool  Defaults to true. 
+     */
+    private $renderValidatorsHint = true;
+    
+
+    /**
+     * Label for the submit button
+     * 
+     * @var string Defaults to "Valider"
+     */
+    private $submitButtonLabel = 'Valider';
+
+    /**
+     * submitButtonLabel Setter
+     * 
+     * @param  string  $label The submit button label
+     */
+    public function setSubmitButtonLabel($label)
+    {
+        $this->submitButtonLabel = $label;
+    }    
+    
+    /**
+     * submitButtonLabel Getter
+     * 
+     * @return string the label for the submit button
+     */
+    public function getSubmitButtonLabel()
+    {
+        return $this->submitButtonLabel;
+    } 
+
+
+    /**
+     * Label for the reset button
+     * 
+     * @var string
+     */
+    private $resetButtonLabel;
+
+    /**
+     * resetButtonLabel Setter
+     * 
+     * @param  string  $label The reset button label
+     */
+    public function setResetButtonLabel($label)
+    {
+        $this->resetButtonLabel = $label;
+    }    
+    
+    /**
+     * resetButtonLabel Getter
+     * 
+     * @return string the label for the reset button
+     */
+    public function getResetButtonLabel()
+    {
+        return $this->resetButtonLabel;
+    }    
+ 
+
+    /**
+     * Activates / desactivate the validator hints 
+     *
+     * @return string The form name
+     */
+    public function enableValidatorsHints($enable = true)
+    {
+        $this->renderValidatorsHint = (bool) $enable;
+    }
+    
+    
+    /**
      * Name Setter
      * 
      * @param  string  $name The form name
@@ -85,21 +181,52 @@ class Form
      */
     public function getName()
     {
-        return $name;
+        return $this->name;
     }
-    
+ 
+    /**
+     * enctype Setter
+     * 
+     * @param  string  $encType the enctype, 
+     * Defaults to 'application/x-www-form-urlencoded'
+     */
+    public function setEncType($encType = 'application/x-www-form-urlencoded')
+    {
+        $this->encType = $encType;
+    }
+
+    /**
+     * enctype Getter
+     * 
+     * @return string the enctype
+     */
+    public function getEncType()
+    {
+        return $this->encType;
+    }
+
     /**
      * Constructor
      * 
-     * @param  string  $name The form name
+     * @param  string  $name    The form name
+     * @param  string  $action  The form action, Optional, defaults to null. 
+     * @param  string  $method  The form method, Optional, defaults to post. 
+     * @param  string  $encType The encType, Optional, defaults to 'application/x-www-form-urlencoded'
      */
-    public function __construct($name)
+    public function __construct($name, $action = null, $method = 'post', $encType = 'application/x-www-form-urlencoded')
     {
-        $this->name = $name;
-    }    
+        $this->setName($name);
+        if ($action)
+        {
+            $this->setAction($action);
+        }
+        $this->setMethod($method);
+
+        $this->setEncType($encType);
+    }
     
     /**
-     * Constructor, binds the model to the Form.
+     * binds the model to the Form.
      * 
      * @param  coreModel  $model the model to represent
      */
@@ -115,7 +242,7 @@ class Form
         $this->model->configure();
         $configuredFields   = $this->model->getTypes();
         $validators         = $this->model->getValidators();
-        
+        $formFields = array_keys($this->getFields());
         if (is_array($fields) && count($fields))
         {    
             foreach ($fields as $fieldName)
@@ -123,17 +250,20 @@ class Form
                 if (!in_array($fieldName, $this->hiddenFields))
                 {    
                     $type = isset($configuredFields[$fieldName]) ? $configuredFields[$fieldName]['type'] : 'text';
-                    $element = FormElementFactory::getElement($type);
-                    $element->setType($type);
-                    $element->setAttributes($configuredFields[$fieldName]['attributes']);
-                    $element->setName($fieldName);
-                    $element->setValue($model->$fieldName);
-                    $this->setValidators($element, $validators);
-                    $this->setField($element);
+                    if (!in_array($fieldName, $formFields))
+                    {    
+                        $element = FormElementFactory::getElement($type);
+                        $element->setType($type);
+                        $element->setAttributes($configuredFields[$fieldName]['attributes']);
+                        $element->setName($fieldName);
+                        $element->setLabel($fieldName);
+                        $element->setValue($model->$fieldName);
+                        $this->setValidators($element, $validators);
+                        $this->setField($element);
+                    }
                 }
             }
         }
-
     }
 
     /**
@@ -153,11 +283,59 @@ class Form
                 if (array_key_exists($fieldName, $values))
                 {
                     $field->setValue($values[$fieldName]);
+                    $field->setLabel($values[$fieldName]);
                     $this->setField($field);
                 }
             }    
         }
     }
+
+    /**
+     * Processes any attached files calling the 
+     * FileFormElement::process 
+     * Returns an array with keys as the element name and value as
+     * the created file.
+     *
+     * @param  array The list of the files to be processed. this value should
+     * have the same structure as the $_FILES array.
+     * @return array The list of the paths processed
+     */
+    public function processFiles(array $files = array())
+    {
+        if (count($files))
+        {
+
+            $fields = $this->getFields();
+            foreach ($files as $key => $file)
+            {
+                if (isset($files[$key]))
+                {
+                    $field = $fields[$key];
+                    // process the file 
+                    $field->setValue($file);
+                    // update the field in the form
+                    $this->setField($field);
+                }
+            }
+        }
+    }
+
+    /**
+     * Binds the processed files to the model
+     * 
+     * @param CoreModel The model in which we will bind the files values
+     */
+    public function bindFilesToModel(CoreModel $model)
+    {
+        foreach ($this->getFields() as $field)
+        {
+            if (('file' == $field->getType()) && (property_exists($model, $field->getName())))
+            {
+                $model->{$field->getName()} = $field->getValue();
+            }
+        }
+    }    
+
 
     /**
      * Sets form hidden Fields
@@ -274,7 +452,7 @@ class Form
     {
         return $this->errors;
     }
-    
+
     /**
      * Sets a list of errors
      * 
@@ -284,7 +462,27 @@ class Form
     {
         $this->errors = $errors;
     }
-    
+    /**
+     * Sets the Form Method
+     * 
+     * @param string $method the form Method
+     */
+    public function setMethod($method)
+    {
+        $this->method = $method;
+    }
+
+    /**
+     * Returns the form Method
+     * 
+     * @return string the Form method
+     */
+    public function getMethod()
+    {
+        return $this->method;
+    }    
+
+
     /**
      * Sets the Form Action
      * 
@@ -294,7 +492,7 @@ class Form
     {
         $this->action = $action;
     }
-    
+
     /**
      * Returns the form Action
      * 
@@ -322,7 +520,7 @@ class Form
     public function render()
     {
         ?>
-            <form  id="form<?php echo $this->getName();?>" method="post" action="<?php echo $this->getAction();?>">
+            <form class="form_<?php echo $this->getName();?>" id="<?php echo $this->getName();?>" method="<?php echo $this->getMethod();?>" action="<?php echo $this->getAction();?>" enctype="<?php echo $this->getEncType();?>" >
 
             <fieldset>
             <?php
@@ -332,11 +530,11 @@ class Form
                 {
                     ?>
                         <label>
-                        <span><?php echo $field->getName(); ?> : </span>
+                        <span><?php echo $field->getLabel() ?> </span>
                         <?php $this->renderFieldErrors($field);?>
                         <?php echo $field->render();?>
-                        <?php echo $field->renderValidatorsHint();?>
-                        
+
+                        <?php if ($this->renderValidatorsHint) echo $field->renderValidatorsHint();?>
                         <br/>
                         </label>
                         <?php
@@ -354,7 +552,7 @@ class Form
             </fieldset>
             <div class="button">
             <input class="none" type="hidden" name="message" value="">
-            <input type="submit" value="Valider" class="submit" />
+            <input type="submit" value="<?php echo $this->getSubmitButtonLabel()?>" class="submit" />
             </div>
             </form>
 

@@ -21,20 +21,79 @@
  * @version     0.1
  */
 
-
 /**
- * Represents a file input element
+ * Represents a File form element
  * 
  */
 class FileFormElement extends FormElement
 {
     /**
-     * echoes a file input element
+     * Temporary directory for the upload
+     * 
+     * @var string  Defaults to null. 
+     */
+    private $destinationDir = null;
+    
+
+     /**
+      * The upload temp directory setter 
+      * 
+      * @param string  $DestinationDir the temporary directory
+      */
+     public function setDestinationDir($destinationDir)
+     {
+         $this->destinationDir = $destinationDir;
+     }    
+     
+     /**
+      * Upload temp directory getter
+      * 
+      * @return string the temporary directory path
+      */
+     public function getDestinationDir()
+     {
+         return $this->destinationDir;
+     }
+
+    /**
+     * Echoes a File form element
      * 
      * @return string
      */
     public function render()
     {
-        echo '<input name="' . $this->getName() . '" type="' . $this->getType() . '" value="' . $this->getValue().'" ' . $this->getAttributesString() . '/>';
-    }    
+        echo '<input name="' . $this->getName() . '" type="file" ' . $this->getAttributesString() . '/>';
+    }
+    
+
+
+    /**
+     * Stores the file 
+     * 
+     * @param  array  $file The file to be processed
+     * array structure should be equivalent to the $_FILES 
+     * element structure
+     * @Exception if the structure of the file is not correct
+     */
+    public function processFile()
+    {
+        $destination = rtrim($this->getDestinationDir(), DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR .  md5(uniqid($this->value['name'])) . '.' . $this->getExtension();
+        if (copy($this->value['tmp_name'], $destination))
+        {
+            $this->value = $destination;
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Returns the file extension based on the last '.'
+     * 
+     * @return string the file extension.
+     */
+    public function getExtension()
+    {
+        return strtolower(substr($this->value['name'], strrpos($this->value['name'], '.') + 1));
+    }
+
 }    

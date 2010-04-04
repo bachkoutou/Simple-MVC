@@ -33,7 +33,7 @@ final class ContainerFactory
      * @param  string  $module The module 
      * @return Container object
      */
-    public function get($module = null)
+    public  static function get($module = null)
     {
         $className = ucfirst($module) . 'Container';
         return (class_exists($className)) ? new $className($module) : new Container($module);

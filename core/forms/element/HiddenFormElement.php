@@ -15,37 +15,26 @@
  */
 
 /**
- * File:        CacheFactory.php
+ * File:        HiddenFormElement.php
  * 
  * @author      Anis BEREJEB
- * 
+ * @version     0.1
  */
 
 /**
- * Cache Factory
+ * Represents a Hidden form element
  * 
  */
-final class CacheFactory
+class HiddenFormElement extends FormElement
 {
+
     /**
-     * Instanciates a cache object
+     * Echoes a Hidden form element
      * 
-     * @param  string  $cacheType The Cache Type
-     * @return Cache object
+     * @return string
      */
-    public static function get($cacheType = null)
+    public function render()
     {
-        $className = $cacheType . 'Cache';
-        return (class_exists($className)) ? new $className() : new ArrayCache();
-    }
-
-    /**
-     * Final private constructor
-     */
-    private function __construct(){}
-
-    /**
-     * private clone
-     */
-    private function __clone(){}
+        echo '<input name="' . $this->getName() . '" type="hidden" value="' . $this->getValue() . '" ' . $this->getAttributesString() . '/>';
+    }    
 }    

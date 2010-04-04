@@ -27,6 +27,7 @@
  */
 abstract class FormElement
 {
+
     /**
      * Name of the element
      * 
@@ -39,7 +40,14 @@ abstract class FormElement
      * 
      * @var string
      */
-    private $value;
+    protected $value;
+
+    /**
+     * Label of the element
+     * 
+     * @var string
+     */
+    private $label;
 
     /**
      * Attributes of the element
@@ -76,6 +84,14 @@ abstract class FormElement
      */
     public static $allowedInputTypes = array('text', 'textarea', 'checkbox', 'radio', 'file');
     
+    /**
+     * TODO: short description.
+     * 
+     */
+    public function __construct()
+    {
+        $this->type = strtolower(substr(get_class($this), 0, -11));
+    }    
     /**
      * Attributes Setter
      * 
@@ -131,6 +147,25 @@ abstract class FormElement
     public function setName($name)
     {
         $this->name = $name;
+    }    
+    /**
+     * Label Getter
+     * 
+     * @return string The label of the element
+     */
+    public function getLabel()
+    {
+        return $this->label;
+    }
+
+    /**
+     * Label Setter
+     * 
+     * @param  string  $label 
+     */
+    public function setLabel($label)
+    {
+        $this->label = $label;
     }    
     
     /**

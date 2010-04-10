@@ -20,11 +20,11 @@
 ;;
 
 [database]
-DB_HOST = localhost;
-DB_USER = <user>;
-DB_PASSWORD = <password>;
-DB_DATABASE = test;
-DB_TYPE = mysql;
+host = localhost;
+user = <user>;
+password = <password>;
+database = <database>;
+type = mysql;
 
 [template]
 AUTO_RENDER_TEMPLATE = 1;
@@ -34,9 +34,9 @@ URL = http://simplemvc.berejeb.com/;
 AUTOLOAD_SAVE_PATH = /tmp;
 
 [controller]
-CONTROLLER_LIST_DEFAULT_NUMBER =  10;
+list_default_number =  10;
 
 [cache]
-DEFAULT_CACHE_TYPE = Array;
-DEFAULT_CACHE_PREFIX = ;
+type = Array;
+prefix = 'admin_';
 

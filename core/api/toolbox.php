@@ -80,5 +80,20 @@ class Toolbox
             $clean[$key] = $param;
         }
         return $clean;
-    }    
+    }
+
+    /**
+     * Loads a php block
+     * 
+     * @param  string  $block 
+     * @return string
+     */
+    public static function loadBlock($block)
+    {
+        ob_start();
+        require($block);
+        $content = ob_get_contents();
+        ob_end_clean();
+        return $content;
+    }
 }

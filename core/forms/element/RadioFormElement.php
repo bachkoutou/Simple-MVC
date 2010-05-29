@@ -25,15 +25,24 @@
  * Represents a radio button element 
  * 
  */
-class RadioFormElement extends FormElement
+class RadioFormElement extends ListFormElement
 {
     /**
-     * Echoes the radio button element
+     * Echoes the Dropdown button element
      * 
      * @return string
      */
     public function render()
     {
-        echo '<input name="' . $this->getName() . '" type="' . $this->getType() . '" value="' . $this->getValue().'" ' . $this->getAttributesString() . '/>';
-    }    
+        foreach ($this->options as $value => $text)
+        {
+            echo '<input type="radio" name="' . $this->getName() . '" value="' . $value . '"';
+            if ($value == $this->selected || $value == $this->value)
+            {
+                echo ' checked';
+            }
+            echo ' /> ' .  $text . ' ';
+        }
+    }
+
 }    

@@ -127,6 +127,7 @@ class CoreController implements IController
      */
     public function setContainer(Container $container)
     {
+        $this->Database           = $container['Database'];
         $this->Router           = $container['Router'];
         $this->Dispatcher       = $container['Dispatcher'];
         $this->CacheManager     = $container['CacheManager'];

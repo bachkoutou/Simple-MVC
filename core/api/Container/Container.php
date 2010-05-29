@@ -159,11 +159,26 @@ class Container implements ArrayAccess
      * Injects the Configuration object 
      * Loads Ini files
      * 
-     * @return 
+     * @return ConfigurationManager the config
      */
     public function setConfig()
     {
         return $this->loadConfig();
     }
 
+    /**
+     * Injects the database to the container
+     * 
+     * @return database the database
+     */
+    public function setDatabase()
+    {
+        return database::getInstance(
+                $this['Config']['database']['host'],
+                $this['Config']['database']['database'],
+                $this['Config']['database']['user'],
+                $this['Config']['database']['password'],
+                $this['Config']['database']['type']
+                );
+    }    
 }

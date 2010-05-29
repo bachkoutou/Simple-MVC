@@ -115,14 +115,17 @@ abstract class FormElement
     /**
      * Returns a string representation of the attributes
      * 
+     * @param $attributes the attributes to render as string, if null it will
+     * take the attributes property
      * @return string 
      */
-    public function getAttributesString()
+    public function getAttributesString($attributes = null)
     {
+        $attributes = (null !== $attributes) ? $attributes : $this->attributes;
         $string = '';
-        if (is_array($this->attributes) && count($this->attributes))
+        if (is_array($attributes) && count($attributes))
         {
-            foreach ($this->attributes as $key => $value)
+            foreach ($attributes as $key => $value)
             {
                 $string.= ' ' . $key . '=' . '"' . $value . '"';
             }    

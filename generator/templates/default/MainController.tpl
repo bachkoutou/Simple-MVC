@@ -26,7 +26,7 @@
 
 class MainController extends CoreController 
 {
-	public function index()
+	public function indexAction()
     {
        //echo $this->view->render();
     }

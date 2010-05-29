@@ -283,7 +283,6 @@ class Form
                 if (array_key_exists($fieldName, $values))
                 {
                     $field->setValue($values[$fieldName]);
-                    $field->setLabel($values[$fieldName]);
                     $this->setField($field);
                 }
             }    
@@ -331,7 +330,8 @@ class Form
         {
             if (('file' == $field->getType()) && (property_exists($model, $field->getName())))
             {
-                $model->{$field->getName()} = $field->getValue();
+                $fields = explode($field->getDestinationDir(), $field->getValue());
+                $model->{$field->getName()} = $fields[1];
             }
         }
     }    
@@ -367,6 +367,30 @@ class Form
     {
         $this->fields[$element->getName()] =$element;
     }
+
+    /**
+     * remove a field
+     * 
+     * @param  mixed  $offset The field name
+     */
+    public function removeField($offset)
+    {
+        unset($this->fields[$offset]);
+    }    
+
+    /**
+     * remove a field
+     * 
+     * @param  mixed  $offset The field name
+     */
+    public function removeFields(array $array)
+    {
+        foreach ($array as $value)
+        {
+            unset($this->fields[$value]);
+        }    
+    }    
+
 
     /**
      * fields getter
@@ -529,14 +553,18 @@ class Form
                 if (!in_array($field->getName(), $this->hiddenFields))
                 {
                     ?>
-                        <label>
-                        <span><?php echo $field->getLabel() ?> </span>
+                        <?php 
+                        $label = $field->getLabel();
+                        if (!empty($label))
+                        {    
+                            echo '<label><span>' . $label . '</span></label>'; 
+                        } 
+                        ?>
                         <?php $this->renderFieldErrors($field);?>
                         <?php echo $field->render();?>
 
                         <?php if ($this->renderValidatorsHint) echo $field->renderValidatorsHint();?>
                         <br/>
-                        </label>
                         <?php
                 }
             }

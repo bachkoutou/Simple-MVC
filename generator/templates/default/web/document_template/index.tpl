@@ -18,6 +18,6 @@ try
 }
 catch (Exception $e)
 {
-    echo $e->getMessage() . '<br/>';
+    echo $console->render();
 }
 

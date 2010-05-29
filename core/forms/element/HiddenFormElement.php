@@ -27,6 +27,15 @@
  */
 class HiddenFormElement extends FormElement
 {
+    /**
+     * No label for hidden fields
+     * 
+     * @return string an empty string
+     */
+    public function getLabel()
+    {
+        return '';
+    }    
 
     /**
      * Echoes a Hidden form element

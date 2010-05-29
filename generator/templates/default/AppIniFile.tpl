@@ -18,6 +18,10 @@
 ; @author      Anis BEREJEB
 ; @version     0.1
 ;;
+;the general section will be viewed by all the mvc components (view, controller, model)
+[general]
+URL = http://simplemvc.berejeb.com/;
+
 
 [database]
 host = {mysqlHost};

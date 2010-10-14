@@ -4,7 +4,7 @@ require_once('../Core/Autoload/AutoloadManager.php');
 
 autoloadManager::addFolder(CORE);
 autoloadManager::addFolder(BUSINESS);
-autoloadManager::setSavePath(AUTOLOAD_SAVE_PATH);
+autoloadManager::setSaveFile(AUTOLOAD_SAVE_PATH . trim(MODULE, '/') . '.php');
 spl_autoload_register('autoloadManager::loadClass');
 
 use \Core\MVC\FrontDispatcher as FrontDispatcher;

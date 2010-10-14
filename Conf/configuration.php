@@ -36,5 +36,5 @@
  define('VIEWS_PATH', 'Views' . DS);
  define('TEMPLATES_PATH', 'Templates' . DS);
  define('DESCRIPTORS_PATH', 'Descriptors' . DS);
- define('AUTOLOAD_SAVE_PATH', '/tmp');
+ define('AUTOLOAD_SAVE_PATH', DS . 'tmp' . DS);
 

@@ -1,5 +1,20 @@
 CHANGELOG :
 ==========================================
+October 10, 2010
+==========================================
+- SimpleMVC is now Fully Namespaced
+- Standardized Directory / File names  
+- Reviewed the Autoload Manager to Support Namespaces.
+- Added Form Decorators
+- Added Components :
+   - Session Manager
+   - Authentication Manager  
+   - Image Helper
+   - HTTP / Curl Client
+   - Full Text Search (Solr Searcher)
+- Fixed Bugs
+  
+==========================================
 April 04 2010
 ==========================================
 
@@ -8,7 +23,7 @@ Bugs / issues
 added static keyword for factories.
 Replaced loading module using core path by business path
 Fixed issue with the IntFormElementValidator validator.
-Fixed some issues with the CoreModel
+Fixed some issues with the Model
 Fixed issue when getting the view name in the Router
 
 =========================================
@@ -17,7 +32,7 @@ Features :
 Added Search Api And implemented a Solr Search
 Added Configuration manager with Multi level Configuration support
 
-Added debugConsole and switch error handler to use Exceptions.
+Added DebugConsole and switch error handler to use Exceptions.
 
 Added files support in the frontDispatcher. 
 added FileFormElement and FileFormElementValidator

@@ -25,6 +25,8 @@
  * Validates an IP Address
  * 
  */
+namespace Core\Form\Validator;
+
 class IPFormElementValidator extends FormElementValidator
 {
     /**

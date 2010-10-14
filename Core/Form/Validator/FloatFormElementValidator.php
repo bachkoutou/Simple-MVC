@@ -25,6 +25,8 @@
  * Represents a float value validator
  * 
  */
+namespace Core\Form\Validator;
+
 class FloatFormElementValidator extends FormElementValidator
 {
     /**

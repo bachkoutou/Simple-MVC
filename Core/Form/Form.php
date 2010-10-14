@@ -278,7 +278,7 @@ class Form
     {
        if (null === $decorator)
        {
-           $this->decorator = new twoColumnTableFormDecorator();
+           $this->decorator = new Decorator\TwoColumnTableFormDecorator();
            $this->decorator->setTableClassName($this->getName() . 'Formcontainer tableDecorator');
            $this->decorator->setTableId($this->getName() . 'Formcontainer');
        }
@@ -426,7 +426,7 @@ class Form
      * 
      * @param  FormElement  $element 
      */
-    public function setField(FormElement $element)
+    public function setField(Element\FormElement $element)
     {
         $this->fields[$element->getName()] =$element;
     }
@@ -618,7 +618,7 @@ class Form
      * 
      * @param  FormElement  $field A form element
      */
-    public function renderFieldErrors(FormElement $field)
+    public function renderFieldErrors(Element\FormElement $field)
     {
         // Strip brakets on field to fix problem with arrays. 
         // this happens with the multi select elements

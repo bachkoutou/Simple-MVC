@@ -25,6 +25,8 @@
  * validates a unique element in database
  * 
  */
+namespace Core\Form\Validator;
+
 class OtherThanMeExistsInDatabaseFormElementValidator extends ExistsInDatabaseFormElementValidator
 {
     /**

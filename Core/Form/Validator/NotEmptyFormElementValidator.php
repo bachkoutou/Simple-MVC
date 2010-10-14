@@ -25,6 +25,8 @@
  * Validates a non empty Element
  * 
  */
+namespace Core\Form\Validator;
+
 class NotEmptyFormElementValidator extends FormElementValidator
 {
     /**

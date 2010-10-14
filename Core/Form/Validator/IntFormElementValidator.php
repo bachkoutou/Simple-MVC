@@ -25,6 +25,8 @@
  * Validates an int value
  * 
  */
+namespace Core\Form\Validator;
+
 class IntFormElementValidator extends FormElementValidator
 {
     /**

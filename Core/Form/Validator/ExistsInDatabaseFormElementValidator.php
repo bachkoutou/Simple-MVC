@@ -25,6 +25,8 @@
  * Represents a range Element Validator
  * 
  */
+namespace Core\Form\Validator;
+
 class ExistsInDatabaseFormElementValidator extends FormElementValidator
 {
     /**

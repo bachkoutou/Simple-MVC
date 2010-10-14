@@ -25,6 +25,8 @@
  * Represents an Email Validator
  * 
  */
+namespace Core\Form\Validator;
+
 class EmailFormElementValidator extends FormElementValidator
 {
     /**

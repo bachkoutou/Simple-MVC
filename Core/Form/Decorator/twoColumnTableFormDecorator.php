@@ -5,7 +5,7 @@
  * 
  */
 namespace Core\Form\Decorator;
-class twoColumnTableFormDecorator extends FormDecorator
+class TwoColumnTableFormDecorator extends FormDecorator
 {
     /**
      * table class Name

@@ -108,9 +108,8 @@ class Router
                 $modelName = '\\Business\\Mvc\\Model\\' . $model . 'Model';
                 $controller->setModel(\Core\Mvc\ModelFactory::getModel($modelName, $database, $modelConfig));
             }
-
         }
-        $viewName = '\\Business\\Mvc\\View\\' . substr($this->_controller,0, -10);
+        $viewName = $this->_params['controller'];
         $view = \Core\Mvc\ViewFactory::getView($viewName, $viewConfig);
         $view->setController($this->_controller);
         $view->setViewName($this->_action);
@@ -220,13 +219,9 @@ class Router
         {
             $paramsString = '';
         } 
-        if (method_exists($controller . 'Controller', $action . 'Action'))
-        {
-            $url = "/?controller=$controller&action={$action}{$message}{$paramsString}";
-            $url = ($encode) ? urlencode($url) : $url;
-            return $url;
-        }
-        return false;
+        $url = "/?controller=$controller&action={$action}{$message}{$paramsString}";
+        $url = ($encode) ? urlencode($url) : $url;
+        return $url;
     }
 
     /**

@@ -25,6 +25,8 @@
  * Represents a Regular Expression validator 
  * 
  */
+namespace Core\Form\Validator;
+
 class FileFormElementValidator extends FormElementValidator
 {
     /**

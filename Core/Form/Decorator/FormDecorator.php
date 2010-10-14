@@ -18,7 +18,7 @@ abstract class FormDecorator implements IFormDecorator
      * 
      * @param  Form  $form 
      */
-    public function setForm(Form $form)
+    public function setForm(\Core\Form\Form $form)
     {
         if (null === $form)
         {

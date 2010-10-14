@@ -297,7 +297,7 @@ abstract class FormElement
      * 
      * @param  FormValidator  $validator the validator to be added  
      */
-    public function addValidator(FormElementValidator $validator)
+    public function addValidator(\Core\Form\Validator\FormElementValidator $validator)
     {
         $this->validators[] = $validator;
     }    

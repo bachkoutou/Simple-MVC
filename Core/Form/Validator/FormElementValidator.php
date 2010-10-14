@@ -25,6 +25,7 @@
  * Validator class for the form elements
  * 
  */
+namespace Core\Form\Validator;
 abstract class FormElementValidator
 {
     /**
@@ -47,7 +48,7 @@ abstract class FormElementValidator
      * 
      * @param  FormElement  $element The element to validate
      */
-    public function __construct(FormElement $element)
+    public function __construct(\Core\Form\Element\FormElement $element)
     {
         $this->element = $element;
     }

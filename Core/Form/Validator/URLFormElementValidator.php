@@ -25,6 +25,8 @@
  * Validates an URL
  * 
  */
+namespace Core\Form\Validator;
+
 class URLFormElementValidator extends FormElementValidator
 {
     /**

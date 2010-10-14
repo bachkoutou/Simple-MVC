@@ -37,7 +37,7 @@ class ViewFactory
      */
     public static function getview($viewName, array $configuration = array())
     {
-        $viewNameView = ucfirst($viewName) . 'View';
+        $viewNameView = '\\Business\\' . rtrim(MODULE, '/') . '\\View\\' . ucfirst($viewName);
         if(class_exists($viewNameView))
         {
             return new $viewNameView($viewName, $configuration);
@@ -46,7 +46,7 @@ class ViewFactory
         {
             throw new \InvalidArgumentException('Check your configuration file, the MODULE constant is not defined.');
         }    
-        $viewName = '\\Business\\' . trim(MODULE, '/') . '\\View\\Main';
-        return new $viewName($viewName, $configuration);
+        $viewNameView = '\\Business\\' . trim(MODULE, '/') . '\\View\\Main';
+        return new $viewNameView($viewName, $configuration);
     }
 }

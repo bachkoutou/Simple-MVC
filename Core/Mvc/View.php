@@ -190,7 +190,7 @@ class View extends \ArrayObject
 	public function main()
 	{
 		$viewName  = ($this->getViewName()) ? $this->getViewName() : $this->getViewName();
-        $file = BUSINESS . DS .  VIEWS_PATH . $this->getController() . DS . $viewName  . $this->getExtension();
+        $file = BUSINESS . DS .  VIEWS_PATH . $this->getControllerName() . DS . $viewName  . $this->getExtension();
         echo $this->load($file);
 	}
 
@@ -202,7 +202,7 @@ class View extends \ArrayObject
 	 */
 	public function render($action = null, $controller = null)
 	{
-		(!$controller) ? $controller = $this->getController() : 'main';
+		(!$controller) ? $controller = $this->getControllerName() : 'main';
 		if (!$action)  $action = $this->getViewName() ;
 		$file = BUSINESS . DS .  VIEWS_PATH . $controller . DS . $action  . $this->getExtension();
 		echo $this->load($file);
@@ -216,7 +216,7 @@ class View extends \ArrayObject
 	 */
 	public function loadBlock($file)
 	{
-		$file = BUSINESS . DS .  VIEWS_PATH . $this->getController() . DS . $file;
+		$file = BUSINESS . DS .  VIEWS_PATH . $this->getControllerName() . DS . $file;
 		echo $this->load($file);
 	}
 	
@@ -284,8 +284,7 @@ class View extends \ArrayObject
 	 */
 	public function setController($controller)
 	{
-		$parts = explode('Controller', $controller);
-		$this->_controller = $parts[0];
+		$this->_controller = $controller;
 	}
 
 	/**
@@ -297,6 +296,17 @@ class View extends \ArrayObject
 	{
 		return $this->_controller;
 	}
+
+    /**
+     * Returns the base controller name
+     * 
+     * @return string the base controller name
+     */
+    public function getControllerName()
+    {
+        $parts = explode('\\', $this->_controller);
+        return $parts[count($parts) - 1];
+    }    
 	
 	/**
 	 * View name Setter
@@ -335,7 +345,7 @@ class View extends \ArrayObject
 	 */
 	public function getContextLink()
 	{
-		return "/?controller=" . $this->getController();
+		return "/?controller=" . $this->getControllerName();
 	}
 
 	/**

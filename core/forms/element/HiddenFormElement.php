@@ -27,6 +27,15 @@
  */
 class HiddenFormElement extends FormElement
 {
+    /**
+     * No label for hidden fields
+     * 
+     * @return string an empty string
+     */
+    public function getLabel()
+    {
+        return '';
+    }    
 
     /**
      * Echoes a Hidden form element
@@ -35,6 +44,8 @@ class HiddenFormElement extends FormElement
      */
     public function render()
     {
-        echo '<input name="' . $this->getName() . '" type="hidden" value="' . $this->getValue() . '" ' . $this->getAttributesString() . '/>';
+        $id = $this->getId();
+        $id = (!empty($id)) ? $id : $this->getName();
+        echo '<input name="' . $this->getName() . '"  id="' . $id . '" type="hidden" value="' . $this->getValue() . '" ' . $this->getAttributesString() . '/>';
     }    
 }    

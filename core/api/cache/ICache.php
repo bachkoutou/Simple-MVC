@@ -35,7 +35,7 @@ interface ICache
      * @param  mixed $value  The value
      * @param  mixed $ttl The time to live
      */
-    public function set($offset, $value, $ttl);
+    public function set($offset, $value, $ttl = null);
     
     /**
      * Checks if an offset exists 

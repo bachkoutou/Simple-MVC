@@ -104,6 +104,14 @@ class CoreView extends ArrayObject
 	 * @var array  Defaults to array(). 
 	 */
 	protected $scripts = array();
+    
+    /**
+     * Scripts to be executed after the view rendering
+     * (CF problem with Chrome when loading javascripts in header)
+     * 
+     * @var array  Defaults to array(). 
+     */
+    protected $afterScripts = array();
 
 	/**
 	 * message
@@ -144,7 +152,6 @@ class CoreView extends ArrayObject
 		parent::__construct(array(), ArrayObject::ARRAY_AS_PROPS);
         $this->viewName = $viewName;
         $this->configuration = $configuration;
-
         $this->renderTemplate = isset($configuration['autorender_template']) ? (bool) $configuration['autorender_template'] : 1;
 	}
     
@@ -433,15 +440,21 @@ class CoreView extends ArrayObject
 	 * 
 	 * @param  string  $script The script to be added, 
      *                         should not include the script tag
+     * @param bool     $after to insert the script after the view rendering, Optional, Defaults to false
 	 */
-	public function addScript($script)
-	{
-		$this->scripts[] =  "<script type=\"text/javascript\">
-					$script 
-				</script>
-				";
-	}
-
+	public function addScript($script, $after = false)
+    {
+        $wrappedScript =  "<script type=\"text/javascript\">$script</script>";
+        if (!$after)
+        {
+            $this->scripts[] = $wrappedScript;
+        }
+        else
+        {
+            $this->afterScripts[] = $wrappedScript;
+        } 
+    }
+    
 	/**
 	 * Echoes the links to the JavaScript Files.
      * Will also includes the Predefined Javascript files (see renderPredefinedJs)
@@ -466,91 +479,54 @@ class CoreView extends ArrayObject
 	}
 
 	/**
-	 * Echoes the JavaScript scripts
-	 * 
-	 */
-	public function renderScripts()
-	{
-		if (is_array($this->scripts) && (0 < count($this->scripts)))
-		{
-			foreach ($this->scripts as $script)
-			{
-				echo $script;
-			}
-		}
-	}
-
-	/**
-     * checks if there is a js file under scripts, if yes include it
+     * Echoes the JavaScript scripts
      *
+	 * @params bool $after to render the after scripts, Optional, Defaults to False
+	 */
+	public function renderScripts($after = false)
+    {
+        $scripts = (!$after) ? $this->scripts : $this->afterScripts;
+        if (is_array($scripts) && (0 < count($scripts)))
+        {
+            foreach ($scripts as $script)
+            {
+                echo $script;
+            }
+        }
+    }
+
+
+    /**
+     * Renders a list of predefined JavaScript files
+     * 
      */
-	public function autoIncludeJs()
-	{
-		// include files in The styles/{module} file
-		$file = '/scripts/' . $this->getModule() . '.js';
-	    $this->addCss($file);
+    public function renderPredefinedJs()
+    {
+        //$this->addScript('jQuery.noConflict();');
+    }
 
-		// include file in The styles/{modules}/{controller}.css file
-		$file = '/scripts/' . $this->getModule() . '/' . $this->getController() . '.js';
-		$this->addJs($file);
+    /**
+     * Renders a list of predefined CSS Files
+     * 
+     */
+    public function renderPredefinedCss()
+    {
+        // Always add style.css
+        //$this->addCss('/styles/style.css');
+    }
 
-		// include files in The styles/{module}/{controller}/{action} file
-		$file = '/scripts/' . $this->getModule() . '/' . $this->getController() . '/' . $this->getViewName() . '.js';
-		$this->addJs($file);
-	}
-
-	/**
-	 * checks if there is a css file under styles, if yes include it
-	 *
-	 */
-	public function autoIncludeCss()
-	{
-		// include files in The styles/{module} file
-		$file = 'styles/' . $this->getModule() . '.css';
-        $this->addCss('/' . $file);
-
-		// include file in The styles/{modules}/{controller}.css file
-		$file = 'styles/' . $this->getModule() . '/' . $this->getController() . '.css';
-        $this->addCss('/' . $file);
-
-		// include files in The styles/{module}/{controller}/{action} file
-		$file = 'styles/' . $this->getModule() . '/' . $this->getController() . '/' . $this->getViewName() . '.css';
-        $this->addCss('/' . $file);
-	}
-
-
-	/**
-	 * Renders a list of predefined JavaScript files
-	 * 
-	 */
-	public function renderPredefinedJs()
-	{
-		//$this->addJs('/scripts/jquery-1.3.2.min.js');
-		//$this->addScript('jQuery.noConflict();');
-	}
-
-	/**
-	 * Renders a list of predefined CSS Files
-	 * 
-	 */
-	public function renderPredefinedCss()
-	{
-		// Always add style.css
-		//$this->addCss('/styles/style.css');
-	}
-
-	/**
-	 * Renders a list of messages
-	 * 
-	 */
-	public function renderMessages()
-	{
-		$msg = $this->getMessage();
-		if ('' != $msg->message)
-		{
-			echo '<div class="' . $msg->type .'">' . $msg->message . ' </div>';
-		}
-	}
+    /**
+     * Renders a list of messages
+     * 
+     */
+    public function renderMessages()
+    {
+        $msg = $this->getMessage();
+        if ('' != $msg->message)
+        {
+            echo '<div class="' . $msg->type .'">' . $msg->message . ' </div>';
+        }
+    }
 
     /**
      * Returns the current module (application name)
@@ -560,5 +536,14 @@ class CoreView extends ArrayObject
     public function getModule()
     {
         return MODULE;
+    }    
+
+    /**
+     * Always Action
+     * 
+     */
+    public function alwaysAction()
+    {
+        return true;
     }    
 }

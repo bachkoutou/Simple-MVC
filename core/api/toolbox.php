@@ -36,7 +36,7 @@ class Toolbox
 	 * @return mixed   The value of the index.
 	 */
 	public static function getArrayParameter($array, $index, $default)
-	{
+    {
 		return (is_array($array) && isset($index) && isset($array[$index])) ? $array[$index] : $default;
 	}
 	
@@ -80,5 +80,20 @@ class Toolbox
             $clean[$key] = $param;
         }
         return $clean;
-    }    
+    }
+
+    /**
+     * Loads a php block
+     * 
+     * @param  string  $block 
+     * @return string
+     */
+    public static function loadBlock($block)
+    {
+        ob_start();
+        require($block);
+        $content = ob_get_contents();
+        ob_end_clean();
+        return $content;
+    }
 }

@@ -34,6 +34,8 @@ class CheckboxFormElement extends FormElement
      */
     public function render()
     {
-        echo '<input name="' . $this->getName() . '" type="' . $this->getType() . '" value="' . $this->getValue().'" ' . $this->getAttributesString() . '/>';
+        $id = $this->getId();
+        $id = (!empty($id)) ? $id : $this->getName();
+        echo '<input name="' . $this->getName() . '" id="'.$id.'" type="' . $this->getType() . '" value="' . $this->getValue().'" ' . $this->getAttributesString() . '/>';
     }    
 }    

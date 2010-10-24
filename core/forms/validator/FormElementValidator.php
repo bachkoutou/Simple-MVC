@@ -57,7 +57,7 @@ abstract class FormElementValidator
      * 
      * @param  string  $message The message to set
      */
-    protected function setMessage($message)
+    public function setMessage($message)
     {
         $this->message = $message;
     }    

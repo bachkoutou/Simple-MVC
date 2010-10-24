@@ -54,7 +54,7 @@ class CoreController implements IController
 	 * @var string  Defaults to null. 
 	 */
 	private $_controllerName = null;
-
+    
 	/**
 	 * The action name
 	 * 
@@ -127,11 +127,33 @@ class CoreController implements IController
      */
     public function setContainer(Container $container)
     {
+        $this->Database           = $container['Database'];
         $this->Router           = $container['Router'];
         $this->Dispatcher       = $container['Dispatcher'];
         $this->CacheManager     = $container['CacheManager'];
         $this->Config    = $container['Config'];
     } 
+
+	/**
+	 * Controller name Setter
+	 * 
+	 * @param  string  $controllerName The name of the controller
+	 */
+	public function setControllerName($controllerName)
+	{
+		$this->_controllerName = $controllerName;
+	}
+
+	/**
+	 * controller name Getter
+	 * 
+	 * @return string The controller name
+	 */
+	public function getControllerName()
+	{
+		return $this->_controllerName;
+	}
+
 
 	/**
 	 * Action name Setter

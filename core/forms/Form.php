@@ -61,6 +61,13 @@ class Form
     private $name = null;
 
     /**
+     * Form Id
+     * 
+     * @var int  Defaults to null. 
+     */
+    private $id = null;
+
+    /**
      * The model represented.
      * 
      * @var CoreModel  Defaults to null. 
@@ -81,7 +88,12 @@ class Form
      */
     protected $hiddenFields = array();
     
-
+    /**
+     * Form Decorator
+     * 
+     * @var FormDecorator  Defaults to null. 
+     */
+    protected $decorator = null;
     /**
      * The errors
      * 
@@ -94,7 +106,7 @@ class Form
      * 
      * @var bool  Defaults to true. 
      */
-    private $renderValidatorsHint = true;
+    protected $renderValidatorsHint = true;
     
 
     /**
@@ -103,6 +115,28 @@ class Form
      * @var string Defaults to "Valider"
      */
     private $submitButtonLabel = 'Valider';
+
+    /**
+     * Id Setter
+     * 
+     * @param  string  $id The form id
+     */
+    public function setId($id)
+    {
+        $this->id = $id;
+    }
+
+    /**
+     * Returns the form id.
+     * 
+     * @return string The form id
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
+
+
 
     /**
      * submitButtonLabel Setter
@@ -131,7 +165,7 @@ class Form
      * @var string
      */
     private $resetButtonLabel;
-
+    
     /**
      * resetButtonLabel Setter
      * 
@@ -151,7 +185,6 @@ class Form
     {
         return $this->resetButtonLabel;
     }    
- 
 
     /**
      * Activates / desactivate the validator hints 
@@ -163,6 +196,15 @@ class Form
         $this->renderValidatorsHint = (bool) $enable;
     }
     
+    /**
+     * tells if the validator hints are enabled
+     * 
+     * @return bool true if hints are enabled, false otherwise
+     */
+    public function validatorHintsEnabled()
+    {
+        return $this->renderValidatorsHint;
+    }    
     
     /**
      * Name Setter
@@ -213,7 +255,7 @@ class Form
      * @param  string  $method  The form method, Optional, defaults to post. 
      * @param  string  $encType The encType, Optional, defaults to 'application/x-www-form-urlencoded'
      */
-    public function __construct($name, $action = null, $method = 'post', $encType = 'application/x-www-form-urlencoded')
+    public function __construct($name, $action = null, $method = 'post', $encType = 'application/x-www-form-urlencoded', FormDecorator $decorator = null)
     {
         $this->setName($name);
         if ($action)
@@ -221,10 +263,30 @@ class Form
             $this->setAction($action);
         }
         $this->setMethod($method);
-
+        $this->setDecorator($decorator);
         $this->setEncType($encType);
     }
     
+    /**
+     * FormDecorator setter
+     * If null defaultFormDecorator will be set
+     *
+     * @param  FormDecorator  $decorator Optional, defaults to null. 
+     */
+    public function setDecorator(FormDecorator $decorator = null)
+    {
+       if (null === $decorator)
+       {
+           $this->decorator = new twoColumnTableFormDecorator();
+           $this->decorator->setTableClassName($this->getName() . 'Formcontainer tableDecorator');
+           $this->decorator->setTableId($this->getName() . 'Formcontainer');
+       }
+       else
+       {
+           $this->decorator = $decorator;
+       }
+       $this->decorator->setForm($this);
+    }   
     /**
      * binds the model to the Form.
      * 
@@ -283,7 +345,6 @@ class Form
                 if (array_key_exists($fieldName, $values))
                 {
                     $field->setValue($values[$fieldName]);
-                    $field->setLabel($values[$fieldName]);
                     $this->setField($field);
                 }
             }    
@@ -331,7 +392,8 @@ class Form
         {
             if (('file' == $field->getType()) && (property_exists($model, $field->getName())))
             {
-                $model->{$field->getName()} = $field->getValue();
+                $fields = explode($field->getDestinationDir(), $field->getValue());
+                $model->{$field->getName()} = $fields[1];
             }
         }
     }    
@@ -367,6 +429,30 @@ class Form
     {
         $this->fields[$element->getName()] =$element;
     }
+
+    /**
+     * remove a field
+     * 
+     * @param  mixed  $offset The field name
+     */
+    public function removeField($offset)
+    {
+        unset($this->fields[$offset]);
+    }    
+
+    /**
+     * remove a field
+     * 
+     * @param  mixed  $offset The field name
+     */
+    public function removeFields(array $array)
+    {
+        foreach ($array as $value)
+        {
+            unset($this->fields[$value]);
+        }    
+    }    
+
 
     /**
      * fields getter
@@ -435,7 +521,10 @@ class Form
                 {
                     if (!$validator->validate())
                     {
-                        $this->errors[$field->getName()][] = $validator->getMessage();
+                        // remove field brakets on the name. this will resolve problems
+                        // with the multiple list elements for example.
+                        $name = str_replace(array('[', ']'), array('', ''), $field->getName());
+                        $this->errors[$name][] = $validator->getMessage();
                     }
                 }
             }
@@ -519,44 +608,7 @@ class Form
      */
     public function render()
     {
-        ?>
-            <form class="form_<?php echo $this->getName();?>" id="<?php echo $this->getName();?>" method="<?php echo $this->getMethod();?>" action="<?php echo $this->getAction();?>" enctype="<?php echo $this->getEncType();?>" >
-
-            <fieldset>
-            <?php
-            foreach ($this->getFields() as $field)
-            {
-                if (!in_array($field->getName(), $this->hiddenFields))
-                {
-                    ?>
-                        <label>
-                        <span><?php echo $field->getLabel() ?> </span>
-                        <?php $this->renderFieldErrors($field);?>
-                        <?php echo $field->render();?>
-
-                        <?php if ($this->renderValidatorsHint) echo $field->renderValidatorsHint();?>
-                        <br/>
-                        </label>
-                        <?php
-                }
-            }
-        if (is_array($this->hiddenFields) && (count($this->hiddenFields) > 0))
-        {
-            foreach ($this->hiddenFields as $value)
-            {
-                ?><input class="none" type="hidden" name="<?php echo $value?>" value="<?php echo (string)$this->model->$value ?>"><?php
-            }
-
-        }
-        ?>
-            </fieldset>
-            <div class="button">
-            <input class="none" type="hidden" name="message" value="">
-            <input type="submit" value="<?php echo $this->getSubmitButtonLabel()?>" class="submit" />
-            </div>
-            </form>
-
-            <?php
+        $this->decorator->render();
     }
 
     /**
@@ -567,10 +619,13 @@ class Form
      */
     public function renderFieldErrors(FormElement $field)
     {
-        if (isset($this->errors[$field->getName()]) && count($this->errors[$field->getName()]))
+        // Strip brakets on field to fix problem with arrays. 
+        // this happens with the multi select elements
+        $name = str_replace(array('[', ']'), array('', ''), $field->getName());
+        if (isset($this->errors[$name]) && count($this->errors[$name]))
         {
             echo "<ul class=\"form_input_error\">";
-            foreach ($this->errors[$field->getName()] as $error)
+            foreach ($this->errors[$name] as $error)
             {
                 echo "<li>$error</li>";
             }    

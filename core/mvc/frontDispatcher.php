@@ -112,6 +112,16 @@ class frontDispatcher
         $container['Dispatcher'] = $this;
         $this->router->route($container);
     }
+    
+    /**
+     * Returns the router object
+     * 
+     * @return Router the router
+     */
+    public function getRouter()
+    {
+        return $this->router;
+    }    
 
     /**
      * Params Getter

@@ -34,13 +34,21 @@ class DebugConsole
     private $exception = null;
 
     /**
+     * debug mode
+     * 
+     * @var bool  Defaults to false. 
+     */
+    private $debug = false;
+
+    /**
      * Constructor
      * 
      * @param  Exception  $e 
      */
-    public function __construct(Exception $e)
+    public function __construct(Exception $e, $debug = false)
     {
         $this->exception = $e;
+        $this->debug = $debug;
     }
 
     /**
@@ -50,6 +58,8 @@ class DebugConsole
      */
     public function render()
     {
+        if ($this->debug)
+        {    
         echo '<style>' . file_get_contents(dirname(__FILE__) . '/DebugConsole.css') . '</style>';
         echo '<div class="DebugConsole">';
         echo '<h3>SimpleMVC Console : We Encountered an error : </h3>';
@@ -59,6 +69,14 @@ class DebugConsole
         echo $this->exception->getTraceAsString();
         echo '</pre>';
         echo '</div>';
+        }
+        else
+        {
+        echo '<style>' . file_get_contents(dirname(__FILE__) . '/DebugConsole.css') . '</style>';
+        echo '<div class="DebugConsole">';
+        echo '<h3>Please Try Again later. We\'ll be back soon!</h3>';
+        echo '</div>';
+        }    
     }
 
 }    

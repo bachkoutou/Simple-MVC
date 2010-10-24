@@ -62,7 +62,9 @@ class FileFormElement extends FormElement
      */
     public function render()
     {
-        echo '<input name="' . $this->getName() . '" type="file" ' . $this->getAttributesString() . '/>';
+        $id = $this->getId();
+        $id = (!empty($id)) ? $id: $this->getName();
+        echo '<input name="' . $this->getName() . '" id="' . $id . '" type="file" ' . $this->getAttributesString() . '/>';
     }
     
 

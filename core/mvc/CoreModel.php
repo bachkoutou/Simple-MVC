@@ -134,7 +134,35 @@ class CoreModel extends ArrayIterator
      * @var array  Defaults to array(). 
      */
     protected $configuration = array();
+    
+    /**
+     * The action error 
+     * Used to handle the application errors
+     * 
+     * @var string defaultes to ''
+     */
+    protected $actionError = '';
 
+    /**
+     * Action Error getter
+     * 
+     * @return string the action error
+     */
+    public function getActionError()
+    {
+        return $this->actionError;
+    } 
+
+    /**
+     * Action error msg setter
+     * 
+     * @param  string  $errorMsg 
+     */
+    public function setActionError($errorMsg)
+    {
+        $this->actionError = $errorMsg;
+    }
+ 
     /**
      * Constructor
      * 
@@ -238,7 +266,7 @@ class CoreModel extends ArrayIterator
         $where =  ($this->computePreparedStatementString());
         if ($where)
         {
-            $stmt =  $this->database->prepare("SELECT count(*) as rows FROM " . $this->getTableName() . " WHERE " . $where . ' LIMIT 1');
+            $stmt =  $this->database->prepare("SELECT count(id) as rows FROM " . $this->getTableName() . " WHERE " . $where . ' LIMIT 1');
             $stmt = $this->bindStatement($stmt);
             if ($stmt->execute())
             {    
@@ -248,6 +276,35 @@ class CoreModel extends ArrayIterator
         }
         return false;
     }
+
+    /**
+     * Executes a statement
+     * 
+     * @param  String  $query the query
+     * @param  array   $array the values array
+     * @return PDO result
+     */
+    public function executeStatement($stmt, array $array)
+    {
+        $stmt =  $this->database->prepare($stmt);
+        $stmt = $this->bindStatement($stmt);
+        if ($stmt->execute($array))
+        {
+            return $stmt->fetchAll( PDO::FETCH_CLASS);
+        }
+        return array();
+    }
+
+    /**
+     * Executes a query 
+     * 
+     * @param  string   $query 
+     */
+    public function executeQuery($query)
+    {
+        return $this->database->query($query, PDO::FETCH_CLASS, get_class($this), array($this->database));
+    }
+
 
     /**
      * Binds the respective row from the Database to the properties
@@ -268,6 +325,13 @@ class CoreModel extends ArrayIterator
                     $this->$key = $value;
                 }
             }
+            else
+            {
+                foreach ($this->getTableKeys() as $key)
+                {
+                    $this->$key = null;
+                }    
+            }    
         }
     }
 
@@ -295,6 +359,10 @@ class CoreModel extends ArrayIterator
             {
                 return $this->id;
             }
+            else
+            {
+                var_dump($this->database->errorInfo());
+            }    
             return false;
         }
         else
@@ -309,8 +377,13 @@ class CoreModel extends ArrayIterator
             $query =  "INSERT INTO " . $this->getTableName() . " (" . $keys . ") VALUES (" . $values . ")";
             if  ($this->database->query($query))
             {
+                $this->id = $this->database->lastInsertId();
                 return $this->database->lastInsertId();
             }
+            else
+            {
+                var_dump($this->database->errorInfo());
+            }    
             return false;
         }
     }
@@ -475,7 +548,7 @@ class CoreModel extends ArrayIterator
             // Remember actual query
             $this->query = $where;
 
-            $sql = 'SELECT COUNT(*) AS number FROM ' . $this->getTableName();
+            $sql = 'SELECT COUNT(id) AS number FROM ' . $this->getTableName();
             if (!empty($where))
                 $sql .= " WHERE ".$where;
             $this->countQuery = $sql;
@@ -523,9 +596,9 @@ class CoreModel extends ArrayIterator
         {
             $this->$property = null;
         }
-        
+
         $res = $this->resultSet->fetch();
-        
+
         if (!$res)
         {
             $this->endEnum();
@@ -775,42 +848,113 @@ class CoreModel extends ArrayIterator
         return $this->types;
     }    
     /************************************** SEARCH OPTIONS **************************/
+
     /**
-     * Finds instances by property
+     * Finds All
      * 
-     * @param  string  $property The property Name
-     * @param  string  $value    The property value
      * @return PDO  A ressource that you can loop with to fetch the result
      */
-    public function findByProperty($property, $value)
+    public function findAll()
     {
-        $property = strtolower($property);
-        if (!property_exists($this->getModelName(), $property))
-        {
-            throw new CoreModelException('Property ' . $property . ' Not found');
-        }    
-        $query =  "SELECT * FROM " . $this->getTableName() . " WHERE $property='$value'";
-        return $this->database->query($query, PDO::FETCH_CLASS, get_class($this));
+        $query =  "SELECT * FROM " . $this->getTableName();
+        return $this->executeQuery($query);
     }
     
     /**
-     * Finds instances with a like pattern applied to a property
+     * Finds instances by property
      * 
-     * @param  string  $property The property Name
-     * @param  string  $value    The property value a SQL92 Like (using the % at the 
-     *                           Begining or the end of the value )
+     * @param  array  $properties   an array of property Names
+     * @param  array  $values       an array of property values
+     * @param  string $join         the join element (AND / OR )
      * @return PDO  A ressource that you can loop with to fetch the result
      */
-    public function findLikeProperty($property, $value)
+    public function findByProperty(array $properties, array $values, $join = 'AND')
     {
-        $property = strtolower($property);
-        if (!property_exists($this->getModelName(), $property))
+        $like = '';
+        $count = count($properties);
+        for ($i = 0; $i< $count; $i++)
         {
-            throw new CoreModelException('Property ' . $property . ' Not found');
-        }    
-        $query =  "SELECT * FROM " . $this->getTableName() . " WHERE $property LIKE '$value'";
-        return $this->database->query($query, PDO::FETCH_CLASS, get_class($this));
+            if (!isset($properties[$i]) || !isset($values[$i]))
+            {
+                throw InvalidArgumentException('properties and values do not match');
+            }    
+            $properties[$i][0] = strtolower($properties[$i][0]);
+            if (!property_exists(get_class($this), $properties[$i]))
+            {
+                throw new InvalidArgumentException('Property ' . $properties[$i] . ' Not found');
+            }    
+            $like .=  ' ' . $join .' ' . $properties[$i] . '=\'' . $values[$i] . '\'';
+        }
+        $like = trim($like, ' ' . $join . ' ');
+        $query =  "SELECT * FROM " . $this->getTableName() . " WHERE $like";
+        return $this->database->query($query, PDO::FETCH_CLASS, get_class($this), array($this->database));
     }
+
+    /**
+     * Finds instances with a like pattern applied to a property
+     * 
+     * @param  array  $properties An array of  property Names
+     * @param  array  $values    The property value a SQL92 Like (using the % at the 
+     *                           Begining or the end of the value )
+     * @param  string $join         the join element (AND / OR )
+     * @return PDO  A ressource that you can loop with to fetch the result
+     */
+    public function findLikeProperty(array $properties, array$values, $join = 'AND')
+    {
+        $like = '';
+        $count = count($properties);
+        for ($i = 0; $i< $count; $i++)
+        {
+            if (!isset($properties[$i]) || !isset($values[$i]))
+            {
+                throw InvalidArgumentException('properties and values do not match');
+            }    
+            $properties[$i][0] = strtolower($properties[$i][0]);
+            if (!property_exists(get_class($this), $properties[$i]))
+            {
+                throw new InvalidArgumentException('Property ' . $properties[$i] . ' Not found');
+            }    
+            $like .=  ' ' . $join . ' ' . $properties[$i] . ' LIKE \'' . $values[$i] . '\'';
+        }
+        $like = trim($like, ' ' . $join . ' ');
+
+
+        $query =  "SELECT * FROM " . $this->getTableName() . " WHERE $like";
+        return $this->database->query($query, PDO::FETCH_CLASS, get_class($this), array($this->database));
+    }
+
+    /**
+     * Deletes instances by property
+     * 
+     * @param  array  $properties   an array of property Names
+     * @param  array  $values       an array of property values
+     * @param  string $join         the join element (AND / OR )
+     * @return PDO  A ressource that you can loop with to fetch the result
+     */
+    public function deleteByProperty(array $properties, array $values, $join = 'AND')
+    {
+        $like = '';
+        $count = count($properties);
+        for ($i = 0; $i< $count; $i++)
+        {
+            if (!isset($properties[$i]) || !isset($values[$i]))
+            {
+                throw InvalidArgumentException('properties and values do not match');
+            }    
+            $properties[$i][0] = strtolower($properties[$i][0]);
+            if (!property_exists(get_class($this), $properties[$i]))
+            {
+                throw new InvalidArgumentException('Property ' . $properties[$i] . ' Not found');
+            }    
+            $like .=  ' ' . $join .' ' . $properties[$i] . '=\'' . $values[$i] . '\'';
+        }
+        $like = trim($like, ' ' . $join . ' ');
+        $sql =  "DELETE FROM " . $this->getTableName() . " WHERE $like";
+        $query =  $this->database->prepare($sql);
+        return $query->execute();
+    }
+
+
 
     /**
      * Finds for objets using a where clause
@@ -821,7 +965,7 @@ class CoreModel extends ArrayIterator
     public function findWhere($where)
     {
         $query =  "SELECT * FROM " . $this->getTableName() . " WHERE $where";
-        return $this->database->query($query, PDO::FETCH_CLASS, get_class($this));
+        return $this->database->query($query, PDO::FETCH_CLASS, get_class($this),  array($this->database));
     }
 
     /**
@@ -849,7 +993,35 @@ class CoreModel extends ArrayIterator
             {
                 throw new InvalidArgumentException('Value not set or empty');
             }
-            return $this->findByProperty($properties[1], $arguments[0]);
+            $join = (strpos($properties[1], 'Or')) ? 'Or' : 'And';
+            $parts = explode($join, $properties[1]);
+            if (count($parts) > 1 && (!is_array($arguments[0]) || !count($arguments[0])))
+            {
+                throw new InvalidArgumentException('Found a compound match, arguments do not match');
+            }
+            if (!is_array($arguments[0]))
+            {
+                $arguments[0] = array($arguments[0]);
+            }    
+            return $this->findByProperty($parts, $arguments[0], strtoupper($join));
+        }
+        elseif (preg_match('/^deleteBy(.*)/', $function, $properties))
+        {
+            if (!isset($arguments[0]) || '' === $arguments[0])
+            {
+                throw new InvalidArgumentException('Value not set or empty');
+            }
+            $join = (strpos($properties[1], 'Or')) ? 'Or' : 'And';
+            $parts = explode($join, $properties[1]);
+            if (count($parts) > 1 && (!is_array($arguments[0]) || !count($arguments[0])))
+            {
+                throw new InvalidArgumentException('Found a compound match, arguments do not match');
+            }
+            if (!is_array($arguments[0]))
+            {
+                $arguments[0] = array($arguments[0]);
+            }    
+            return $this->deleteByProperty($parts, $arguments[0], strtoupper($join));
         }
         elseif (preg_match('/^findLike(.*)/', $function, $properties))
         {
@@ -857,7 +1029,29 @@ class CoreModel extends ArrayIterator
             {
                 throw new InvalidArgumentException('Value not set or empty');
             }
-            return $this->findLikeProperty($properties[1], $arguments[0]);
+
+            $join = (strpos($properties[1], 'Or')) ? 'Or' : 'And';
+            $parts = explode($join, $properties[1]);
+            if (count($parts) > 1 && (!is_array($arguments[0]) || !count($arguments[0])))
+            {
+                throw new InvalidArgumentException('Found a compound match, arguments do not match');
+            }
+            if (!is_array($arguments[0]))
+            {
+                $arguments[0] = array($arguments[0]);
+            }
+
+            return $this->findLikeProperty($parts, $arguments[0], $join);
         }
     }
+    
+    /**
+     * Database Getter
+     * 
+     * @return PDODatabase $database
+     */
+    public function getDatabase()
+    {
+        return $this->database;
+    }   
 }

@@ -84,24 +84,22 @@ class Router
      * @Exception thrown if the action does not exist
      */
     public function route(Container $container)
-    {    
-        $controllerConfig = isset($container['Config']['controller']) ? $container['Config']['controller'] : array();
-        $modelConfig = isset($container['Config']['model']) ? $container['Config']['model'] : array();
-        $viewConfig = isset($container['Config']['view']) ? $container['Config']['view'] : array();
+    {
+        // general configuration
+        $generalConfig =  isset($container['Config']['general']) ? $container['Config']['general'] : array();
+        // per mvc component configuration
+        $controllerConfig = array_merge($generalConfig, isset($container['Config']['controller']) ? $container['Config']['controller'] : array());
+        $modelConfig =  array_merge($generalConfig, isset($container['Config']['model']) ? $container['Config']['model'] : array());
+        $viewConfig =  array_merge($generalConfig, isset($container['Config']['view']) ? $container['Config']['view'] : array());
         // get the controller Object
         $controller = controllerFactory::getController($this->_controller, $controllerConfig);
+        $controller->setControllerName($this->_controller);
         // inject any dependencies to the controller
         $container['Router'] = $this;
-        $controller->setContainer($container);
         $controller->setActionName($this->_action);
         $usedModels = $controller->getUsedModels();
-        $database =  database::getInstance(
-                        $container['Config']['database']['host'],
-                        $container['Config']['database']['database'],
-                        $container['Config']['database']['user'],
-                        $container['Config']['database']['password'],
-                        $container['Config']['database']['type']
-                        ); 
+        $database =  $container['database'];
+        $controller->setContainer($container);
         if (0 < count($usedModels))
         {
             foreach ($usedModels as $model)
@@ -117,11 +115,9 @@ class Router
         $view->setViewName($this->_action);
         $view->setExtension('.php');
         $view->setTemplate('default.php');
-        $view->autoIncludeJs();
-        $view->autoIncludeCss();
         $controller->setView($view);
 
-		$action = $this->_action . 'Action';	
+		$action = $this->_action . 'Action';
         if (method_exists($controller, $action))
         {
         	// execute always action every time, 
@@ -136,26 +132,28 @@ class Router
         	
         	// Execute the current action
             $controller->$action();
-        	
             // Execute after if exists 
             $afterAction = "after" . ucfirst($action);
             if (method_exists($controller, $afterAction))
         	{
         		$controller->$afterAction();
         	}            
-            
+            // execute view always action
+            $controller->view->alwaysAction();
         	// Execute the view action . _executeView will indicate which view to execute
         	// if we indicate it via Controller::setView(view);
-        	$setViewName = $controller->view->getViewName();
+        	$setViewName = $controller->view->getViewName() . 'Action';
             if (method_exists($controller->view, $setViewName))
-        	{
-        		$controller->view->$setViewName();
+            {
+                $controller->view->$setViewName();
         	}
         	else 
         	{
                 if (method_exists($controller->view, $action))
                 {
-        		    $controller->view->$action();
+                    $controller->view->$action();
+                    // render any scripts after the view if set
+                    $controller->view->renderScripts(true);
                 }
         	}
         	// render the template
@@ -185,32 +183,53 @@ class Router
      * @param  string $messageType A message type, Optional, defaults to 'success'. 
      * @param  array  $params      An array of additional parameters, Optional, defaults to null. 
      */
-    public function redirect($action, $controller = null, $message = '', $messageType = 'success', $params = null)
+    public function redirect($action, $controller = null, $message = '', $messageType = 'success', $params = null, $encode = false)
+    {
+        $url = $this->getRedirectURL($action, $controller,$message, $messageType, $params, $encode);
+        header("location: $url");
+        exit();
+    }    
+ 
+    /**
+     * Returns the url to Redirect to , 
+     * Checks if the action and the controller exist before 
+     * 
+     * @param  string $action      The action to redirect in
+     * @param  string $controller  The controller, Optional, defaults to current controller. 
+     * @param  string $message     A message to add in the request, Optional, defaults to ''. 
+     * @param  string $messageType A message type, Optional, defaults to 'success'. 
+     * @param  array  $params      An array of additional parameters, Optional, defaults to null. 
+     * @param  bool   $encode      Encode the url or not, default to false
+     */
+    public function getRedirectURL($action, $controller = null, $message = '', $messageType = 'success', $params = null, $encode = false)
     {
         if (!$action)
         {
             return false;
         }
-
+        if (null == $controller)
+        {
+            $controller = substr($this->getController(),0,-10);
+        }    
         if('' != $message)
         {
             $message= '&message=' . $message . '&messageType=' . $messageType;
         }
         if ($params)
         {
-            $paramsString = http_build_query($params);
+            $paramsString = '&' . http_build_query($params);
         }    
         else
         {
             $paramsString = '';
-        }   
+        } 
         if (method_exists($controller . 'Controller', $action . 'Action'))
         {
-            header("location: /?controller=$controller&action=$action&$message&$paramsString");
-            exit();
+            $url = "/?controller=$controller&action={$action}{$message}{$paramsString}";
+            $url = ($encode) ? urlencode($url) : $url;
+            return $url;
         }
         return false;
-
     }
 
     /**

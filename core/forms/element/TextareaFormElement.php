@@ -34,6 +34,8 @@ class TextareaFormElement extends FormElement
      */
     public function render()
     {
-        echo '<textarea name="' . $this->getName(). '" ' . $this->getAttributesString() . '> ' . $this->getValue() . '</textarea>';
+        $id = $this->getId();
+        $id = (!empty($id)) ? $id : $this->getName();
+        echo '<textarea name="' . $this->getName(). '"  id="' . $id . '" ' . $this->getAttributesString() . '>' . $this->getValue() . '</textarea>';
     }    
 }    

@@ -27,6 +27,59 @@
  */
 abstract class FormElement
 {
+    /**
+     * form name
+     * 
+     * @var string  Defaults to null. 
+     */
+    public $formName = null;
+
+    /**
+     * Form name Setter
+     * 
+     * @param  string  $formName The form name
+     */
+    public function setFormName($formName)
+    {
+        $this->formName = $formName;
+    }
+
+    /**
+     * Form name Getter
+     * 
+     * @return string the form name
+     */
+    public function getFormName()
+    {
+        return $this->formName;
+    }
+
+    /**
+     * form id
+     * 
+     * @var string  Defaults to null. 
+     */
+    public $formId = null;
+
+    /**
+     * Form id Setter
+     * 
+     * @param  string  $formId The form id
+     */
+    public function setFormId($formId)
+    {
+        $this->formId = $formId;
+    }
+
+    /**
+     * Form id Getter
+     * 
+     * @return string the form id
+     */
+    public function getFormId()
+    {
+        return $this->formId;
+    }
 
     /**
      * Name of the element
@@ -34,6 +87,13 @@ abstract class FormElement
      * @var string
      */
     private $name;
+    
+    /**
+     * Id of the element
+     * 
+     * @var string
+     */
+    private $id;
 
     /**
      * Value of the element
@@ -97,7 +157,7 @@ abstract class FormElement
      * 
      * @param  array  $attributes 
      */
-    public function setAttributes($attributes)
+    public function setAttributes(array $attributes)
     {
         $this->attributes = $attributes;
     }    
@@ -115,14 +175,17 @@ abstract class FormElement
     /**
      * Returns a string representation of the attributes
      * 
+     * @param $attributes the attributes to render as string, if null it will
+     * take the attributes property
      * @return string 
      */
-    public function getAttributesString()
+    public function getAttributesString($attributes = null)
     {
+        $attributes = (null !== $attributes) ? $attributes : $this->attributes;
         $string = '';
-        if (is_array($this->attributes) && count($this->attributes))
+        if (is_array($attributes) && count($attributes))
         {
-            foreach ($this->attributes as $key => $value)
+            foreach ($attributes as $key => $value)
             {
                 $string.= ' ' . $key . '=' . '"' . $value . '"';
             }    
@@ -147,6 +210,26 @@ abstract class FormElement
     public function setName($name)
     {
         $this->name = $name;
+    }
+
+    /**
+     * Id Setter
+     * 
+     * @param  string  $id 
+     */
+    public function setId($id)
+    {
+        $this->id = $id;
+    }
+
+    /**
+     * Id Getter
+     * 
+     * @return string the id
+     */
+    public function getId()
+    {
+        return (isset($this->id) && (null !== $this->id) && !empty($this->id)) ? $this->id : $this->name;
     }    
     /**
      * Label Getter

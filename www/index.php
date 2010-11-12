@@ -4,8 +4,8 @@ function exception_error_handler($errno, $errstr, $errfile, $errline ) {
     throw new ErrorException($errstr, 0, $errno, $errfile, $errline);
 }
 //set_error_handler("exception_error_handler");
-require_once('../conf/configuration_front.php');
-require_once('../core/autoloadManager.php');
+require_once(dirname(__FILE__) . '/../conf/configuration_front.php');
+require_once(dirname(__FILE__) . '/../core/autoloadManager.php');
 autoloadManager::setSaveFile('/tmp/front.php');
 autoloadManager::addFolder(CORE);
 autoloadManager::addFolder(BUSINESS);

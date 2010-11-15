@@ -7,7 +7,7 @@ function exception_error_handler($errno, $errstr, $errfile, $errline ) {
 //set_error_handler("exception_error_handler");
 require_once(dirname(__FILE__) . '/../conf/configuration_front.php');
 require_once(dirname(__FILE__) . '/../core/autoloadManager.php');
-autoloadManager::setSaveFile('/tmp/front.php');
+autoloadManager::setSaveFile(dirname(__FILE__) . '/../tmp/front.php');
 autoloadManager::addFolder(CORE);
 autoloadManager::addFolder(BUSINESS);
 spl_autoload_register('autoloadManager::loadClass');

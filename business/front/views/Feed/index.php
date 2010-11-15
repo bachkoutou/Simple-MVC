@@ -7,5 +7,9 @@
             {
         ?>
             <li><a href="/?controller=Feed&action=detail&id=<?php echo $feed->id?>"><?php echo $feed->name;?></a></li>
-        <?php }}?>
+        <?php }
+        } else { ?>
+
+        <li><?php echo $this->languages['no_feeds']?></li>
+        <?php }?>
         </ul>

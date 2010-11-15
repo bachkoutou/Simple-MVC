@@ -37,7 +37,11 @@ class FeedController extends CoreController
      */
     public function indexAction()
     {
-        $this->view->feeds = $this->model->findAll()->fetchAll();
+        $feeds = $this->model->findAll();
+        if (false !== $feeds)
+        {    
+            $this->view->feeds = $feeds->fetchAll();
+        }    
     }
 
     /**

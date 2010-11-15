@@ -97,18 +97,7 @@ class Router
         // inject any dependencies to the controller
         $container['Router'] = $this;
         $controller->setActionName($this->_action);
-        $usedModels = $controller->getUsedModels();
-        $database =  $container['database'];
         $controller->setContainer($container);
-        if (0 < count($usedModels))
-        {
-            foreach ($usedModels as $model)
-            {
-                $modelName = $model . 'Model';
-                $controller->setModel(modelFactory::getModel($modelName, $database, $modelConfig));
-            }
-
-        }
         $viewName = substr($this->_controller,0, -10);
         $view = viewFactory::getView($viewName, $viewConfig);
         $view->setController($this->_controller);

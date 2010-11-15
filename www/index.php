@@ -3,6 +3,7 @@ header('Content-Type=text/html; charset=UTF-8');
 function exception_error_handler($errno, $errstr, $errfile, $errline ) {
     throw new ErrorException($errstr, 0, $errno, $errfile, $errline);
 }
+
 //set_error_handler("exception_error_handler");
 require_once(dirname(__FILE__) . '/../conf/configuration_front.php');
 require_once(dirname(__FILE__) . '/../core/autoloadManager.php');

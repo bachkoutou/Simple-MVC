@@ -19,6 +19,3 @@
 ; @version     0.1
 ;;
 [general]
-application.session.checkFrequency = "300000";
-images.destination_dir = "/home/biscotto/public_html/demo.simplemvc.berejeb.com/iphone/www/images/uploads/";
-images.destination_url = "/images/uploads/";

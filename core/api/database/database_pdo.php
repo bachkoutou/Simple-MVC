@@ -37,14 +37,16 @@ class PDODatabase extends PDO
      * @param  string   $pass   The password
      * @param  string   $dbType The database Type, Optional, defaults to 'mysql'. 
      *                          Supports all databases supported by PDO.
+     * @param  arrat    $params An array for other PDO params, I.E. for mysql :
+     *                          array(PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8")
      */
-    public function __construct($host, $dbname, $user, $pass, $dbType='mysql')
+    public function __construct($host, $dbname, $user, $pass, $dbType='mysql', $params = array())
     {
         parent::__construct(
             "$dbType:host=$host;dbname=$dbname", 
             $user, 
             $pass,
-            array(PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8")
+            $params
         );
 
     }

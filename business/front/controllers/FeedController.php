@@ -12,6 +12,9 @@ class FeedController extends CoreController
     public function setContainer(Container $container)
     {
         parent::setContainer($container);
+        // database is set on the business layer. this will allow the use of
+        // the mvc without coupling automatically the database.
+        $this->Database           = $container['Database'];
         $this->Access = $container['Access'];
         $this->Request = $container['Request'];
         $this->languages   =  $container['Language'];
@@ -26,22 +29,6 @@ class FeedController extends CoreController
     {
         parent::alwaysAction();
         $this->model = new FeedModel($this->Database);
-
-        $array  = array();
-        if (isset($this->languages['views'][strtolower($this->Request['controller'])][strtolower($this->Request['action'])]) && isset($this->languages['general']))
-        {    
-            $this->view->languages = array_merge_recursive(
-                $this->languages['views'][strtolower($this->Request['controller'])][strtolower($this->Request['action'])],
-                $this->languages['general']
-            );
-        }
-        else
-        {
-            if (isset($this->languages['general']))
-            {
-                $this->view->languages = $this->languages['general'];    
-            }    
-        }    
     }    
     
     /**
@@ -85,13 +72,13 @@ class FeedController extends CoreController
     private function getFeedInfos($feed, $url, $itemsNumber)
     {
         $rss = $this->getRSS($url, $itemsNumber);
-
         $feed->title = $rss->channel->title;
         $feed->description = $rss->channel->description;
         $feed->link = $rss->channel->link;
         $feed->lastUpdated = $rss->channel->lastBuildDate;
         $feed->image = $rss->channel->image;
         $feed->items = array();
+        $i = 0;
         foreach ($rss->channel->item as $item) 
         {
             if ($i == $itemsNumber) break;
@@ -109,11 +96,22 @@ class FeedController extends CoreController
      */
     private function getRSS($url, $itemsNumber = 5)
     {
-        $client = new CurlClient();
-        $client->setUrl($url);
-        $client->setReturnTransfer();
-        $client->setAsGet();
-        return simplexml_load_string($client->call());
+        $feedKey = 'simplemvc_cache_feeds_list_' . $url;
+        if (!$this->CacheManager->exists($feedKey))
+        {
+            $client = new CurlClient();
+            $client->setUrl($url);
+            $client->setReturnTransfer();
+            $client->setAsGet();
+            $feedRaw = $client->call();
+            $this->CacheManager->set($feedKey, $feedRaw, $this->Config['general']['rss']['ttl']);
+            $feeds = simplexml_load_string($feedRaw);
+        }
+        else
+        {
+            $feeds = simplexml_load_string($this->CacheManager->get($feedKey));
+        }
+        return $feeds;
     } 
 
     /**
@@ -152,7 +150,7 @@ class FeedController extends CoreController
         else
         {
             $params = array_merge(array('id' => $this->model->id, 'errors' => $form->getErrors()));
-             $this->Router->redirect('add', 'Feed', $this->language['redirect']['element_not_saved'], CoreView::MESSAGE_TYPE_ERROR, $params);
+            $this->Router->redirect('add', 'Feed', $this->language['redirect']['element_not_saved'], CoreView::MESSAGE_TYPE_ERROR, $params);
         }
         exit();
 

@@ -81,7 +81,8 @@ class twoColumnTableFormDecorator extends FormDecorator
             {
                 foreach ($this->form->getHiddenFields() as $value)
                 {
-                    ?><input class="none" type="hidden" name="<?php echo $value?>" value="<?php echo (string)$this->form->model->$value ?>"><?php
+                    $inputValue = (isset($this->form->model->$value)) ? (string) $this->form->model->$value : '';
+                    ?><input class="none" type="hidden" name="<?php echo $value?>" value="<?php echo $inputValue ?>"><?php
                 }
 
             }

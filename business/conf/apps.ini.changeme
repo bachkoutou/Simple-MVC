@@ -38,6 +38,7 @@ list_default_number =  10;
 autorender_template = 1;
 
 [cache]
-type = Array;
+;allowed types : Array, File, APC
+type = File;
 prefix = simplemvc;
 directory = /tmp;

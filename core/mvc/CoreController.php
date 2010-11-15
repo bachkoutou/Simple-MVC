@@ -113,12 +113,26 @@ class CoreController implements IController
      */
 	public function alwaysAction()
 	{
-		$dispatcher = frontDispatcher::getInstance();
-		$this->view->setMessage(
-		Toolbox::getArrayParameter($dispatcher->getParams(),'message',''),
-		Toolbox::getArrayParameter($dispatcher->getParams(),'messageType','success')
-		);
-	}
+        if (isset($this->languages['views'][strtolower($this->Request['controller'])][strtolower($this->Request['action'])]) && isset($this->languages['general']))
+        {
+            $this->view->languages = array_merge_recursive(
+                $this->languages['views'][strtolower($this->Request['controller'])][strtolower($this->Request['action'])],
+                $this->languages['general']
+            );
+        }
+        else
+        {
+            if (isset($this->languages['general']))
+            {
+                $this->view->languages = $this->languages['general'];
+            }
+        }
+
+        $this->view->setMessage(
+            Toolbox::getArrayParameter($this->Request,'message',''),
+            Toolbox::getArrayParameter($this->Request,'messageType','success')
+        );
+    }
 
     /**
      * Inject dependencies of the Controller
@@ -127,53 +141,52 @@ class CoreController implements IController
      */
     public function setContainer(Container $container)
     {
-        $this->Database           = $container['Database'];
         $this->Router           = $container['Router'];
         $this->Dispatcher       = $container['Dispatcher'];
         $this->CacheManager     = $container['CacheManager'];
         $this->Config    = $container['Config'];
     } 
 
-	/**
-	 * Controller name Setter
-	 * 
-	 * @param  string  $controllerName The name of the controller
-	 */
-	public function setControllerName($controllerName)
-	{
-		$this->_controllerName = $controllerName;
-	}
+    /**
+     * Controller name Setter
+     * 
+     * @param  string  $controllerName The name of the controller
+     */
+    public function setControllerName($controllerName)
+    {
+        $this->_controllerName = $controllerName;
+    }
 
-	/**
-	 * controller name Getter
-	 * 
-	 * @return string The controller name
-	 */
-	public function getControllerName()
-	{
-		return $this->_controllerName;
-	}
+    /**
+     * controller name Getter
+     * 
+     * @return string The controller name
+     */
+    public function getControllerName()
+    {
+        return $this->_controllerName;
+    }
 
 
-	/**
-	 * Action name Setter
-	 * 
-	 * @param  string  $actionName The name of the action
-	 */
-	public function setActionName($actionName)
-	{
-		$this->_actionName = $actionName;
-	}
+    /**
+     * Action name Setter
+     * 
+     * @param  string  $actionName The name of the action
+     */
+    public function setActionName($actionName)
+    {
+        $this->_actionName = $actionName;
+    }
 
-	/**
-	 * Action name Getter
-	 * 
-	 * @return string The action name
-	 */
-	public function getActionName()
-	{
-		return $this->_actionName;
-	}
+    /**
+     * Action name Getter
+     * 
+     * @return string The action name
+     */
+    public function getActionName()
+    {
+        return $this->_actionName;
+    }
 
     /**
      * Returns the used models 
@@ -184,7 +197,7 @@ class CoreController implements IController
     {
         return $this->_useModels;
     }    
-    
+
     /**
      * Sets a model to the controller
      * 

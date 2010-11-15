@@ -40,4 +40,4 @@ autorender_template = 1;
 [cache]
 type = Array;
 prefix = simplemvc;
-
+directory = /tmp;

@@ -12,4 +12,4 @@ CREATE TABLE IF NOT EXISTS `feed` (
 
 INSERT INTO `feed` (`id`, `name`, `url`, `itemsNumber`) VALUES
 (1, 'Anis berejeb', 'http://feeds.feedburner.com/AnisBerejeb', 5),
-(2, 'Houssem Bensalem', 'http://www.hbensalem.com/feed', 4);
+(2, 'Houssem Bensalem', 'http://www.hbensalem.com/feed/', 4);

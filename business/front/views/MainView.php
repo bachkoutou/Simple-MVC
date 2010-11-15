@@ -7,7 +7,7 @@ class MainView extends CoreView
      */
     public function alwaysAction()
     {
-        $this->addJs('/scripts/jquery-1.4.3.min.js');
+        $this->addJs('/scripts/jquery-1.4.4.min.js');
         $this->enableJQueryMobile();
     }
 
@@ -17,7 +17,7 @@ class MainView extends CoreView
      */
     private function enableJQueryMobile()
     {
-        $this->addCss('/styles/jquerymobile.min.css');
-        $this->addJs('/scripts/jquerymobile.min.js');
+        $this->addCss('/scripts/jquery.mobile-1.0a2/jquery.mobile-1.0a2.min.css');
+        $this->addJs('/scripts/jquery.mobile-1.0a2/jquery.mobile-1.0a2.min.js');
     }
 }    

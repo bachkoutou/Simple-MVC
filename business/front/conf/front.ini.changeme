@@ -19,3 +19,8 @@
 ; @version     0.1
 ;;
 [general]
+application.session.checkFrequency = "300000";
+images.destination_dir = "/the/path/to/your/images/uploads/";
+images.destination_url = "/images/uploads/";
+rss.ttl = 10000;
+

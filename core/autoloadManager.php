@@ -184,12 +184,12 @@ class autoloadManager
     {
         // check if the class already exists in the cache file
         $loaded = self::checkClass($className, self::$_classes);
-        if (true === self::$_regenerate || (!$loaded || 2 === $loaded))
+        if (true === self::$_regenerate || !$loaded)
         {
             // parse the folders returns the list of all the classes
             // in the application
             self::refresh(false);
-            
+             
             // recheck if the class exists again in the reloaded classes
             $loaded = self::checkClass($className, self::$_classes);
             if (!$loaded)
@@ -402,4 +402,3 @@ class autoloadManager
         return null === $element; 
     }
 }
-

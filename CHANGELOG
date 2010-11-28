@@ -1,5 +1,21 @@
 CHANGELOG :
 ==========================================
+November 27 2010
+==========================================
+New Code for Simple MVC :
+Several Bug Fixes in the Core Package
+Added Session Manager
+Added Form Decorators
+Added Access Handling
+Added Configurable User Rights Manager
+New FormElement Validators
+Enhanced the MVC
+Added a Debug Console
+Added a default Demo Application
+
+
+
+==========================================
 April 04 2010
 ==========================================
 
@@ -26,9 +42,3 @@ added method, enctype support and changed constructor to accept formName, formAc
 added HiddenFormElement element
 added label support for forms
 
-========================================
-- to implement :
-========================================
-  - session manager
-  - authentication manager  
-  - Captcha Form element

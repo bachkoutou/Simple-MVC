@@ -1,5 +1,19 @@
 CHANGELOG :
 ==========================================
+November 27 2010
+==========================================
+New Code for Simple MVC :
+Several Bug Fixes in the Core Package
+Added Form Decorators
+Added Access Handling
+Added Configurable User Rights Manager
+New FormElement Validators
+Enhanced the MVC
+Added a Debug Console
+Added a default Demo Application
+
+
+==========================================
 April 04 2010
 ==========================================
 
@@ -14,7 +28,6 @@ Fixed issue when getting the view name in the Router
 =========================================
 Features :
 =========================================
-Added Search Api And implemented a Solr Search
 Added Configuration manager with Multi level Configuration support
 
 Added debugConsole and switch error handler to use Exceptions.
